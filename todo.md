@@ -1,0 +1,77 @@
+# Vision Node (Local Audition Agent) Implementation Checklist
+
+## 1. Project Initialization & Infrastructure
+- [x] **Repository Setup**
+    - [x] Initialize Git repository
+    - [x] Create directory structure: `/backend`, `/frontend`, `/docker`
+    - [x] Create `docker-compose.yaml` for FastAPI + Ollama orchestration
+- [ ] **Backend Environment**
+    - [ ] Initialize Python environment (Poetry or venv)
+    - [ ] Install dependencies: `fastapi`, `uvicorn`, `httpx`, `pydantic`, `sqlalchemy` (or `tortoise-orm`), `pywhatkit`, `python-multipart`
+- [ ] **Frontend Environment**
+    - [ ] Initialize React App (Vite + TypeScript)
+    - [ ] Install dependencies: `tailwindcss` (v4.0), `zustand`, `lucide-react`, `framer-motion` (for animations), `axios`/`tanstack-query`
+    - [ ] Install UI Library: `shadcn/ui` or `heroui`
+
+## 2. Backend Implementation (FastAPI + Ollama)
+- [ ] **Database & Models**
+    - [ ] Design SQLite Schema: `Participant` (id, name, phone, act, status, created_at, sheet_id)
+    - [ ] Setup ORM (SQLAlchemy/Tortoise) and migration scripts
+    - [ ] Implement Deduplication Logic (Check if phone number already exists/invited)
+- [ ] **Ollama Integration (Inference Layer)**
+    - [ ] Create `OllamaClient` service to interface with local API
+    - [ ] specific Vision Prompt Engineering ("Professional registrar" persona, JSON output enforcement)
+    - [ ] Implement "Chain of Thought" validation logic (Phone digit verification)
+- [ ] **Core API Endpoints**
+    - [ ] `POST /upload`: Handle image upload and trigger Vision processing
+    - [ ] `GET /participants`: Retrieve list of extracted participants (with status)
+    - [ ] `PATCH /participants/{id}`: Update participant details (Manual correction)
+    - [ ] `POST /invite`: Trigger WhatsApp invitation flow for selected participants
+- [ ] **WhatsApp Automation Service (Action Layer)**
+    - [ ] Implement `pywhatkit` wrapper
+    - [ ] Create "Messaging Loop" with throttling (15-30s random delay)
+    - [ ] Implement Template Engine for dynamic messages ("Hey {name}, loved the {performance}...")
+    - [ ] Add safety checks (skip invalid numbers marked with "??")
+
+## 3. Frontend Implementation (React + Tailwind)
+- [ ] **Visual Identity & Theming**
+    - [ ] Configure Tailwind theme:
+      - [ ] Background: `#0F0F12`
+      - [ ] Surfaces: `#1A1A1E`
+      - [ ] Accent: `#00D1FF` (Cyan)
+      - [ ] Success: `#00FF94`, Warning: `#FFB800`
+    - [ ] Setup Fonts: *Geist Sans* (Headings) and *JetBrains Mono* (Data)
+- [ ] **Layout & Components**
+    - [ ] **Header**: Status indicator for "Ollama Connected"
+    - [ ] **Hero/Dropzone**:
+      - [ ] Drag-and-drop file input
+      - [ ] "Scanning Beam" animation (CSS/Framer Motion)
+    - [ ] **Agentic Data Table**:
+      - [ ] Display Name, Phone, Act, Status
+      - [ ] Inline editing capabilities
+      - [ ] Skeleton loaders for "Scanning" state
+      - [ ] Confidence Warning (Amber underline for unsure digits)
+    - [ ] **Action Panel**:
+      - [ ] "Fire Invites" button with Progress Ring animation
+- [ ] **State Management (Zustand)**
+    - [ ] Create store for `participants`, `uploadStatus`, `agentStatus`
+    - [ ] Implement optimistic updates for inline editing
+
+## 4. Integration & Logic
+- [ ] **End-to-End Wiring**
+    - [ ] Connect Generic Upload component to Backend `/upload`
+    - [ ] Render API results in Data Table
+    - [ ] Wire up "Send Invites" button to triggering the backend automation loop
+- [ ] **Real-time Updates (Optional but recommended)**
+    - [ ] Poll status or use WebSockets for progress updates during messaging loop ("Sent 1/15...", "Waiting...")
+
+## 5. Testing & Verification
+- [ ] **OCR Accuracy Test**: Run against sample handwritten and printed sheets
+- [ ] **Automation Safety**: Verify `pywhatkit` opens WhatsApp Web and handles delays correctly
+- [ ] **Data Persistence**: Ensure reloading the app doesn't lose the parsed list (SQLite verification)
+
+## 6. Documentation & Packaging
+- [ ] Write `README.md` with:
+    - [ ] Prerequisites (Ollama, Chrome, WhatsApp Login)
+    - [ ] Setup instructions
+- [ ] Finalize Docker setup for easy deployment

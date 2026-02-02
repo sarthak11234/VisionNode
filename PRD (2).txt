@@ -1,0 +1,111 @@
+This updated PRD focuses on building a **Local-First Agentic System**. By leveraging local Vision models (like Llama 3.2-Vision) via Ollama, you maintain data privacy for your fellow students and eliminate API costs, while keeping the "Agent" behavior for automation.
+
+---
+
+# PRD: Local Audition Agent (LAA)
+
+**Project Owner:** Sarthak
+
+**Tech Paradigm:** Local LLM / Agentic Workflow
+
+**Version:** 2.0 (Local-First)
+
+---
+
+## 1. Objective
+
+To build a locally-hosted AI agent that uses computer vision to parse physical audition sheets and automates the process of sending WhatsApp invitations, mimicking the "headless" efficiency of tools like Clawdbot.
+
+## 2. Core User Story
+
+> "As a student coordinator, I want to point my webcam or upload a photo of my audition sheet to a local agent so that it can identify the participants and invite them to the WhatsApp group without my data ever leaving my machine."
+
+---
+
+## 3. System Architecture
+
+The system consists of three layers:
+
+1. **Inference Layer:** Ollama running a Vision-Language Model (VLM).
+2. **Agent Logic:** A Python-based "Orchestrator" that manages the flow from OCR to Messaging.
+3. **Action Layer:** `pywhatkit` for browser-based automation.
+
+---
+
+## 4. Functional Requirements
+
+### 4.1 Local Vision Extraction (The "Eyes")
+
+* **Model:** Llama 3.2-Vision (11B) or Qwen2.5-VL.
+* **Requirement:** Must extract `Name`, `Phone`, and `Performance Type`.
+* **Handling Handwriting:** The agent must use a "Chain of Thought" prompt to double-check digits (e.g., "Does this phone number have 10 digits? If not, re-examine the image").
+
+### 4.2 The "Clawdbot" Persistence (The "Memory")
+
+* **Deduplication:** The agent must maintain a local `history.json` or SQLite log.
+* **Requirement:** If the user uploads the same sheet twice, the agent should skip people who have already been sent an invite.
+
+### 4.3 Interactive Human-in-the-Loop
+
+* **Mode 1 (CLI):** Agent prints a table in the terminal and asks: `Proceed with sending 15 invites? (y/n)`.
+* **Mode 2 (Web):** A React-based table (sourced from your FastAPI backend) that allows live editing of extracted text.
+
+### 4.4 WhatsApp Automation
+
+* **Throttling:** Implement a randomized delay of 15–30 seconds between messages to avoid WhatsApp's anti-spam detection.
+* **Template Engine:** Support for dynamic messages: *"Hey {name}, loved the {performance} audition! Join the group here: {link}"*
+
+---
+
+## 5. Technical Specifications
+
+| Component | Choice | Reason |
+| --- | --- | --- |
+| **Local Inference** | Ollama | Easy management of Vision models. |
+| **Vision Model** | `llama3.2-vision` | Best-in-class local OCR performance. |
+| **Backend Framework** | FastAPI | High performance; you already have experience with it. |
+| **Messaging** | `pywhatkit` | Non-API approach to avoid WhatsApp Business costs. |
+| **State Management** | JSON/SQLite | To prevent duplicate messaging (Memory). |
+
+---
+
+## 6. Implementation Snippets (The "Agentic" Core)
+
+### 6.1 The Vision Prompt
+
+To get reliable JSON from a local model, the system prompt is critical:
+
+> "You are a professional registrar. Analyze the provided image of an audition sheet. Output a valid JSON array of objects with keys 'name', 'phone', and 'act'. Only include 10-digit numbers. If a number is unclear, suffix it with '??'."
+
+### 6.2 The Messaging Loop
+
+```python
+import time
+import pywhatkit as kit
+
+def agent_action(participants, group_link):
+    for p in participants:
+        if "??" in p['phone']:
+            print(f"⚠️ Skipping {p['name']} due to unclear number.")
+            continue
+            
+        message = f"Hi {p['name']}, join the final group: {group_link}"
+        kit.sendwhatmsg_instantly(f"+91{p['phone']}", message, 15, True, 3)
+        print(f"✅ Invite sent to {p['name']}")
+        time.sleep(10) # Safety buffer
+
+```
+
+---
+
+## 7. Success Criteria
+
+1. **Privacy:** 100% of image processing happens on the local GPU/CPU.
+2. **Efficiency:** Time to process one sheet (20 names) is under 2 minutes.
+3. **Portability:** The entire setup can be cloned and run on any machine with Ollama installed.
+
+---
+
+### Next Steps for You
+
+Since you've built *OmniAgentOS*, the backend logic will be straightforward. **Would you like me to generate a `docker-compose.yaml` file to help you containerize the FastAPI backend and Ollama so they work together seamlessly?**

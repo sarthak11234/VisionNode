@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # The Brain: Ollama (Local LLM)
+  # Uses the host's GPU if available.
+  ollama:
+    image: ollama/ollama:latest
+    container_name: visionnode-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # Enable GPU support if NVIDIA drivers are present
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  # The Logic: FastAPI Backend
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: visionnode-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    depends_on:
+      - ollama
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  # The UI: React Frontend
+  # (For development, we'll run this locally via Vite usually, 
+  # but here is the production-ready logic)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: visionnode-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  ollama_data:
