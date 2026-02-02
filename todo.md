@@ -5,9 +5,9 @@
     - [x] Initialize Git repository
     - [x] Create directory structure: `/backend`, `/frontend`, `/docker`
     - [x] Create `docker-compose.yaml` for FastAPI + Ollama orchestration
-- [ ] **Backend Environment**
-    - [ ] Initialize Python environment (Poetry or venv)
-    - [ ] Install dependencies: `fastapi`, `uvicorn`, `httpx`, `pydantic`, `sqlalchemy` (or `tortoise-orm`), `pywhatkit`, `python-multipart`
+- [x] **Backend Environment**
+    - [x] Initialize Python environment (Poetry or venv)
+    - [x] Install dependencies: `fastapi`, `uvicorn`, `httpx`, `pydantic`, `sqlalchemy` (or `tortoise-orm`), `pywhatkit`, `python-multipart`
 - [ ] **Frontend Environment**
     - [ ] Initialize React App (Vite + TypeScript)
     - [ ] Install dependencies: `tailwindcss` (v4.0), `zustand`, `lucide-react`, `framer-motion` (for animations), `axios`/`tanstack-query`
@@ -18,12 +18,12 @@
     - [ ] Design SQLite Schema: `Participant` (id, name, phone, act, status, created_at, sheet_id)
     - [ ] Setup ORM (SQLAlchemy/Tortoise) and migration scripts
     - [ ] Implement Deduplication Logic (Check if phone number already exists/invited)
-- [ ] **Ollama Integration (Inference Layer)**
-    - [ ] Create `OllamaClient` service to interface with local API
-    - [ ] specific Vision Prompt Engineering ("Professional registrar" persona, JSON output enforcement)
+- [x] **Ollama Integration (Inference Layer)**
+    - [x] Create `OllamaClient` service to interface with local API
+    - [x] specific Vision Prompt Engineering ("Professional registrar" persona, JSON output enforcement)
     - [ ] Implement "Chain of Thought" validation logic (Phone digit verification)
 - [ ] **Core API Endpoints**
-    - [ ] `POST /upload`: Handle image upload and trigger Vision processing
+    - [x] `POST /upload`: Handle image upload and trigger Vision processing
     - [ ] `GET /participants`: Retrieve list of extracted participants (with status)
     - [ ] `PATCH /participants/{id}`: Update participant details (Manual correction)
     - [ ] `POST /invite`: Trigger WhatsApp invitation flow for selected participants
