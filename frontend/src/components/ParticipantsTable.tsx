@@ -18,13 +18,21 @@ export const ParticipantsTable = () => {
                     <h2 className="text-2xl font-display font-bold text-white">Participants</h2>
                     <p className="text-white/40 text-sm">Review detected details before sending invites.</p>
                 </div>
-                <button
-                    className="group flex items-center gap-2 px-6 py-2.5 bg-accent text-black font-semibold rounded-lg hover:bg-accent/90 transition-all active:scale-95"
-                    onClick={() => alert("Connecting to WhatsApp Automation...")}
-                >
-                    <span>Fire Invites</span>
-                    <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        className="px-4 py-2.5 bg-white/5 border border-white/10 text-white hover:bg-white/10 rounded-lg transition-colors text-sm font-medium"
+                        onClick={() => useAppStore.getState().setUploadStatus('idle')}
+                    >
+                        + Scan Another Page
+                    </button>
+                    <button
+                        className="group flex items-center gap-2 px-6 py-2.5 bg-accent text-black font-semibold rounded-lg hover:bg-accent/90 transition-all active:scale-95"
+                        onClick={() => alert("Connecting to WhatsApp Automation...")}
+                    >
+                        <span>Fire Invites</span>
+                        <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                </div>
             </div>
 
             {/* Table Card */}

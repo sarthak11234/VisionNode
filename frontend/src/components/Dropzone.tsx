@@ -5,7 +5,7 @@ import axios from 'axios';
 
 export const Dropzone = () => {
     const [isDragActive, setIsDragActive] = useState(false);
-    const { setUploadStatus, uploadStatus, setParticipants } = useAppStore();
+    const { setUploadStatus, uploadStatus, addParticipants } = useAppStore();
 
     const handleFile = async (file: File) => {
         if (!file.type.startsWith('image/')) return;
@@ -22,7 +22,7 @@ export const Dropzone = () => {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
 
-            setParticipants(response.data.participants);
+            addParticipants(response.data.participants);
             setUploadStatus('complete');
         } catch (error) {
             console.error(error);
