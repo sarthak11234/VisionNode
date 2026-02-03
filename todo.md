@@ -8,10 +8,10 @@
 - [x] **Backend Environment**
     - [x] Initialize Python environment (Poetry or venv)
     - [x] Install dependencies: `fastapi`, `uvicorn`, `httpx`, `pydantic`, `sqlalchemy` (or `tortoise-orm`), `pywhatkit`, `python-multipart`
-- [ ] **Frontend Environment**
-    - [ ] Initialize React App (Vite + TypeScript)
-    - [ ] Install dependencies: `tailwindcss` (v4.0), `zustand`, `lucide-react`, `framer-motion` (for animations), `axios`/`tanstack-query`
-    - [ ] Install UI Library: `shadcn/ui` or `heroui`
+- [x] **Frontend Environment**
+    - [x] Initialize React App (Vite + TypeScript)
+    - [x] Install dependencies: `tailwindcss` (v4.0), `zustand`, `lucide-react`, `framer-motion` (for animations), `axios`/`tanstack-query`
+    - [x] Install UI Library: `shadcn/ui` or `heroui`
 
 ## 2. Backend Implementation (FastAPI + Ollama)
 - [ ] **Database & Models**
@@ -22,7 +22,7 @@
     - [x] Create `OllamaClient` service to interface with local API
     - [x] specific Vision Prompt Engineering ("Professional registrar" persona, JSON output enforcement)
     - [ ] Implement "Chain of Thought" validation logic (Phone digit verification)
-- [ ] **Core API Endpoints**
+- [x] **Core API Endpoints**
     - [x] `POST /upload`: Handle image upload and trigger Vision processing
     - [ ] `GET /participants`: Retrieve list of extracted participants (with status)
     - [ ] `PATCH /participants/{id}`: Update participant details (Manual correction)
