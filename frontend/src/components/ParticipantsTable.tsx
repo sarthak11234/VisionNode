@@ -1,13 +1,40 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Send, Check, AlertTriangle, Edit2 } from 'lucide-react';
+import { Send, Check, AlertTriangle, Edit2, Plus, MessageCircle } from 'lucide-react';
 import { useAppStore, type Participant } from '../store/useAppStore';
 
 export const ParticipantsTable = () => {
-    const { participants, uploadStatus, updateParticipant } = useAppStore();
+    const { participants, uploadStatus, updateParticipant, addParticipants } = useAppStore();
     const [editingId, setEditingId] = useState<number | null>(null);
 
-    if (uploadStatus !== 'complete') return null;
+    const handleFireInvites = async () => {
+        if (participants.length === 0) return;
+        if (!window.confirm(`Send invites to ${participants.length} people?`)) return;
+        try {
+            await axios.post('http://localhost:8000/invite', { participants });
+            alert("All invites sent!");
+        } catch (e) { alert("Error sending invites"); }
+    };
+
+    const sendIndividual = async (index: number, p: Participant) => {
+        const msg = prompt(`Enter message for ${p.name}:`, p.customMessage || `Hey ${p.name}, join us!`);
+        if (msg === null) return; // Cancelled
+
+        // Update store with custom message
+        updateParticipant(index, { customMessage: msg });
+
+        try {
+            // Send just this one
+            await axios.post('http://localhost:8000/invite', {
+                participants: [{ ...p, customMessage: msg }]
+            });
+            alert(`Message sent to ${p.name}!`);
+            updateParticipant(index, { status: 'sent' });
+        } catch (e) {
+            alert("Failed to send message.");
+        }
+    };
+
 
     return (
         <div className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -20,14 +47,21 @@ export const ParticipantsTable = () => {
                 </div>
                 <div className="flex gap-3">
                     <button
+                        className="flex items-center gap-2 px-4 py-2.5 bg-white/5 border border-white/10 text-white hover:bg-white/10 rounded-lg transition-colors text-sm font-medium"
+                        onClick={() => addParticipants([{ name: '', phone: '', act: '', status: 'pending' }])}
+                    >
+                        <Plus className="w-4 h-4" />
+                        Add Row
+                    </button>
+                    <button
                         className="px-4 py-2.5 bg-white/5 border border-white/10 text-white hover:bg-white/10 rounded-lg transition-colors text-sm font-medium"
                         onClick={() => useAppStore.getState().setUploadStatus('idle')}
                     >
-                        + Scan Another Page
+                        + Scan Page
                     </button>
                     <button
                         className="group flex items-center gap-2 px-6 py-2.5 bg-accent text-black font-semibold rounded-lg hover:bg-accent/90 transition-all active:scale-95"
-                        onClick={() => alert("Connecting to WhatsApp Automation...")}
+                        onClick={handleFireInvites}
                     >
                         <span>Fire Invites</span>
                         <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -63,8 +97,15 @@ export const ParticipantsTable = () => {
                             ))}
                             {participants.length === 0 && (
                                 <tr>
-                                    <td colSpan={6} className="p-8 text-center text-white/30">
-                                        No participants detected. Try scanning again.
+                                    <td colSpan={6} className="p-12 text-center">
+                                        <p className="text-white/30 mb-4">No participants yet.</p>
+                                        <button
+                                            onClick={() => addParticipants([{ name: '', phone: '', act: '', status: 'pending' }])}
+                                            className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-accent rounded-md transition-colors text-sm"
+                                        >
+                                            <Plus className="w-4 h-4" />
+                                            Add Manually
+                                        </button>
                                     </td>
                                 </tr>
                             )}
@@ -164,10 +205,18 @@ const EditableRow = ({
                     <button
                         onClick={onEdit}
                         className="p-1.5 rounded-md text-white/40 hover:text-white hover:bg-white/5 transition-colors opacity-0 group-hover:opacity-100"
+                        title="Edit Details"
                     >
                         <Edit2 className="w-4 h-4" />
                     </button>
                 )}
+                <button
+                    onClick={() => (window as any).sendIndividual(index, data)}
+                    className="p-1.5 rounded-md text-accent/60 hover:text-accent hover:bg-accent/10 transition-colors opacity-0 group-hover:opacity-100 ml-1"
+                    title="Send Custom Message"
+                >
+                    <MessageCircle className="w-4 h-4" />
+                </button>
             </td>
         </tr>
     );

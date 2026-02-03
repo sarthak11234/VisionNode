@@ -5,7 +5,7 @@ from typing import List, Dict, Any
 import os
 
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-MODEL_NAME = "llama3.2-vision"
+MODEL_NAME = "llava"
 
 async def analyze_image(image_bytes: bytes) -> List[Dict[str, Any]]:
     """
@@ -38,15 +38,31 @@ async def analyze_image(image_bytes: bytes) -> List[Dict[str, Any]]:
     
     async with httpx.AsyncClient(timeout=60.0) as client:
         try:
+            print(f"Sending request to Ollama ({MODEL_NAME})...")
             response = await client.post(f"{OLLAMA_HOST}/api/chat", json=payload)
             response.raise_for_status()
             
             result = response.json()
             content = result.get("message", {}).get("content", "[]")
             
+            # Write to log file for guaranteed visibility
+            with open("debug.log", "a", encoding="utf-8") as f:
+                f.write(f"\n--- NEW REQUEST ---\nRaw Ollama Response: {content}\n")
+
+            print(f"Raw Ollama Response: {content}") 
+
+            # Robust Regex Extraction
+            import re
+            json_match = re.search(r'\[.*\]', content, re.DOTALL)
+            
+            if json_match:
+                clean_content = json_match.group(0)
+            else:
+                clean_content = content.strip() # Fallback
+
             # Parse the content as JSON
             try:
-                data = json.loads(content)
+                data = json.loads(clean_content)
                 # Ensure it's a list
                 if isinstance(data, dict):
                     # Sometimes models return a wrapper object like {"participants": [...]}
@@ -55,9 +71,15 @@ async def analyze_image(image_bytes: bytes) -> List[Dict[str, Any]]:
                     return [data]
                 return data
             except json.JSONDecodeError:
-                print(f"Failed to parse JSON: {content}")
+                error_msg = f"Failed to parse JSON: {content}"
+                print(error_msg)
+                with open("debug.log", "a", encoding="utf-8") as f:
+                    f.write(f"{error_msg}\n")
                 return []
                 
         except Exception as e:
-            print(f"Ollama Error: {str(e)}")
+            error_msg = f"Ollama Error: {str(e)}"
+            print(error_msg)
+            with open("debug.log", "a", encoding="utf-8") as f:
+                f.write(f"{error_msg}\n")
             return []

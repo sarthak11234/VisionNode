@@ -33,9 +33,17 @@ async def send_invites_orchestrator(participants: List[Participant], group_link:
         if not phone_number.startswith("+"):
             phone_number = f"+91{phone_number}"
             
-        message = f"Hey {p.name}, loved your audition for {p.act}! Join our official group here: {group_link}"
+        if p.custom_message:
+            message = p.custom_message
+        else:
+            message = f"Hey {p.name}, loved your audition for {p.act}! Join our official group here: {group_link}"
         
         try:
+            log_msg = f"Attempting to send to {phone_number} (Name: {p.name})"
+            print(log_msg)
+            with open("debug.log", "a", encoding="utf-8") as f:
+                f.write(f"\n{log_msg}\n")
+
             if ENABLE_REAL_SENDING:
                 # PyWhatKit opens web.whatsapp.com. 
                 # wait_time=15 (time to load page), tab_close=True, close_time=3
@@ -44,7 +52,7 @@ async def send_invites_orchestrator(participants: List[Participant], group_link:
                     kit.sendwhatmsg_instantly,
                     phone_no=phone_number, 
                     message=message, 
-                    wait_time=10, 
+                    wait_time=20,  # INCREASED WAIT TIME
                     tab_close=True, 
                     close_time=4
                 )
@@ -61,7 +69,10 @@ async def send_invites_orchestrator(participants: List[Participant], group_link:
             p.status = 'sent'
             
         except Exception as e:
-            print(f"❌ Failed to send to {p.name}: {e}")
+            error_msg = f"❌ Failed to send to {p.name}: {e}"
+            print(error_msg)
+            with open("debug.log", "a", encoding="utf-8") as f:
+                f.write(f"{error_msg}\n")
             p.status = 'failed'
             
         results.append(p)

@@ -6,6 +6,7 @@ export interface Participant {
     act: string;
     confidence?: number;
     status: 'pending' | 'sent' | 'failed';
+    customMessage?: string;
 }
 
 interface AppState {
