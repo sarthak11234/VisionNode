@@ -58,10 +58,10 @@
     - [x] Implement optimistic updates for inline editing
 
 ## 4. Integration & Logic
-- [ ] **End-to-End Wiring**
-    - [ ] Connect Generic Upload component to Backend `/upload`
-    - [ ] Render API results in Data Table
-    - [ ] Wire up "Send Invites" button to triggering the backend automation loop
+- [x] **End-to-End Wiring**
+    - [x] Connect Generic Upload component to Backend `/upload`
+    - [x] Render API results in Data Table
+    - [x] Wire up "Send Invites" button to triggering the backend automation loop
 - [ ] **Real-time Updates (Optional but recommended)**
     - [ ] Poll status or use WebSockets for progress updates during messaging loop ("Sent 1/15...", "Waiting...")
 

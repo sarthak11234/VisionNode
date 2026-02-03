@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from schemas import ExtractionResponse, Participant
 from services.ollama_client import analyze_image
+from services.whatsapp_service import send_invites_orchestrator
+from pydantic import BaseModel
 
 app = FastAPI(title="VisionNode Backend", version="1.0")
 
@@ -45,3 +47,18 @@ async def upload_sheet(file: UploadFile = File(...)):
         participants.append(p)
         
     return ExtractionResponse(participants=participants)
+
+class InviteRequest(BaseModel):
+    participants: List[Participant]
+
+@app.post("/invite")
+async def send_invites(request: InviteRequest):
+    """
+    Triggers the background automation loop to send WhatsApp invites.
+    """
+    # In a real production app, this should be a BackgroundTask
+    # checking if we want to block until done or return immediately.
+    # For now, we await it to verify completion.
+    updated_participants = await send_invites_orchestrator(request.participants)
+    return {"status": "completed", "results": updated_participants}
+
