@@ -34,28 +34,28 @@
     - [ ] Add safety checks (skip invalid numbers marked with "??")
 
 ## 3. Frontend Implementation (React + Tailwind)
-- [ ] **Visual Identity & Theming**
-    - [ ] Configure Tailwind theme:
-      - [ ] Background: `#0F0F12`
-      - [ ] Surfaces: `#1A1A1E`
-      - [ ] Accent: `#00D1FF` (Cyan)
-      - [ ] Success: `#00FF94`, Warning: `#FFB800`
-    - [ ] Setup Fonts: *Geist Sans* (Headings) and *JetBrains Mono* (Data)
-- [ ] **Layout & Components**
-    - [ ] **Header**: Status indicator for "Ollama Connected"
-    - [ ] **Hero/Dropzone**:
-      - [ ] Drag-and-drop file input
-      - [ ] "Scanning Beam" animation (CSS/Framer Motion)
-    - [ ] **Agentic Data Table**:
-      - [ ] Display Name, Phone, Act, Status
-      - [ ] Inline editing capabilities
-      - [ ] Skeleton loaders for "Scanning" state
-      - [ ] Confidence Warning (Amber underline for unsure digits)
-    - [ ] **Action Panel**:
-      - [ ] "Fire Invites" button with Progress Ring animation
-- [ ] **State Management (Zustand)**
-    - [ ] Create store for `participants`, `uploadStatus`, `agentStatus`
-    - [ ] Implement optimistic updates for inline editing
+- [x] **Visual Identity & Theming**
+    - [x] Configure Tailwind theme:
+      - [x] Background: `#0F0F12`
+      - [x] Surfaces: `#1A1A1E`
+      - [x] Accent: `#00D1FF` (Cyan)
+      - [x] Success: `#00FF94`, Warning: `#FFB800`
+    - [x] Setup Fonts: *Geist Sans* (Headings) and *JetBrains Mono* (Data)
+- [x] **Layout & Components**
+    - [x] **Header**: Status indicator for "Ollama Connected"
+    - [x] **Hero/Dropzone**:
+      - [x] Drag-and-drop file input
+      - [x] "Scanning Beam" animation (CSS/Framer Motion)
+    - [x] **Agentic Data Table**:
+      - [x] Display Name, Phone, Act, Status
+      - [x] Inline editing capabilities
+      - [x] Skeleton loaders for "Scanning" state
+      - [x] Confidence Warning (Amber underline for unsure digits)
+    - [x] **Action Panel**:
+      - [x] "Fire Invites" button with Progress Ring animation
+- [x] **State Management (Zustand)**
+    - [x] Create store for `participants`, `uploadStatus`, `agentStatus`
+    - [x] Implement optimistic updates for inline editing
 
 ## 4. Integration & Logic
 - [ ] **End-to-End Wiring**
