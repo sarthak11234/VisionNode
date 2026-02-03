@@ -34,4 +34,46 @@ function App() {
   );
 }
 
-export default App;
+// Simple Error Boundary implementation for function components
+import { Component, type ErrorInfo, type ReactNode } from "react";
+
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(_: Error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error("Uncaught error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-8 text-center text-white">
+          <h1 className="text-2xl font-bold text-red-500 mb-4">Something went wrong.</h1>
+          <button
+            className="px-4 py-2 bg-white/10 rounded hover:bg-white/20"
+            onClick={() => window.location.reload()}
+          >
+            Reload App
+          </button>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+export default function WrappedApp() {
+  return (
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  )
+}

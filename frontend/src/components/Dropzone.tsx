@@ -22,12 +22,24 @@ export const Dropzone = () => {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
 
-            addParticipants(response.data.participants);
-            setUploadStatus('complete');
+            if (response.data && Array.isArray(response.data.participants)) {
+                addParticipants(response.data.participants);
+                setUploadStatus('complete');
+            } else {
+                console.error("Invalid response format:", response.data);
+                setUploadStatus('error');
+                alert("Failed to parse participants. Please try again or enter manually.");
+            }
         } catch (error) {
             console.error(error);
             setUploadStatus('error');
+            alert("Error uploading image. Make sure the backend is running.");
         }
+    };
+
+    const handleManualEntry = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setUploadStatus('complete'); // Go to table
     };
 
     const onDrop = useCallback((e: React.DragEvent) => {
@@ -64,19 +76,11 @@ export const Dropzone = () => {
                 />
 
                 {uploadStatus === 'scanning' ? (
-                    <div className="flex flex-col items-center gap-4 z-10">
-                        <div className="relative w-16 h-16 flex items-center justify-center">
-                            <div className="absolute inset-0 border-t-2 border-accent rounded-full animate-spin" />
-                            <div className="absolute inset-2 border-r-2 border-accent/50 rounded-full animate-spin reverse" />
-                            <span className="text-2xl">👁️</span>
-                        </div>
+                    <div className="flex flex-col items-center gap-4 py-8">
+                        <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
                         <div className="text-center">
-                            <p className="text-lg font-medium text-white">Analyzing Audition Sheet...</p>
-                            <p className="text-sm text-white/40">Extracting names & numbers</p>
-                        </div>
-                        {/* Scanning Beam Effect */}
-                        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-                            <div className="absolute w-full h-1 bg-accent/50 shadow-[0_0_20px_rgba(0,209,255,0.8)] animate-scan" />
+                            <p className="text-lg font-medium text-white">Scanning...</p>
+                            <p className="text-sm text-white/50">Please wait while we read the image.</p>
                         </div>
                     </div>
                 ) : (
@@ -88,9 +92,15 @@ export const Dropzone = () => {
                             <p className="text-lg font-medium text-white">
                                 Drag & drop your audition sheet
                             </p>
-                            <p className="text-sm text-white/40 mt-1">
+                            <p className="text-sm text-white/40 mt-1 mb-4">
                                 or click to browse (JPG, PNG)
                             </p>
+                            <button
+                                onClick={handleManualEntry}
+                                className="text-sm text-accent hover:text-accent/80 underline decoration-dashed underline-offset-4 transition-colors z-20 relative"
+                            >
+                                Or enter details manually
+                            </button>
                         </div>
                     </div>
                 )}

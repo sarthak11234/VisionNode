@@ -36,7 +36,32 @@ async def send_invites_orchestrator(participants: List[Participant], group_link:
         if p.custom_message:
             message = p.custom_message
         else:
-            message = f"Hey {p.name}, loved your audition for {p.act}! Join our official group here: {group_link}"
+            # User requested "Hey {name}" instead of "Hey everyone"
+            # We use the body provided in the latest prompt
+            message = f"""Hey {p.name} 👋
+First of all, thank you for showing up for the auditions — really appreciate the effort and energy you all brought in 🙌
+
+This is Sarthak Chavan
+Media Secretary, DYPCOEI
+Technical Head – Karandak & Annual Events.
+
+For the next step, we need you to mail your performance tracks for technical review. Please follow the instructions below carefully ⬇️
+
+Track Submission Guidelines:
+• Send the final track only
+• File name must be your performer name
+(Example: sarthak_chavan.mp3)
+• Format: MP3 or WAV only
+• Track should be properly mixed, edited, and cut
+• Audio quality should be clear and performance-ready
+
+📩 Mail your tracks to:
+sarthakchavan223@gmail.com
+
+These tracks will be checked for quality, timing, and technical feasibility, so please double-check everything before sending.
+
+Thanks for your cooperation, and all the best 💪
+If you have any doubts, feel free to reach out."""
         
         try:
             log_msg = f"Attempting to send to {phone_number} (Name: {p.name})"

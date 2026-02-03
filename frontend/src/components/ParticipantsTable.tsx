@@ -7,17 +7,20 @@ export const ParticipantsTable = () => {
     const { participants, uploadStatus, updateParticipant, addParticipants } = useAppStore();
     const [editingId, setEditingId] = useState<number | null>(null);
 
+    // Only show if we have results or user manually entered data
+    if (uploadStatus !== 'complete') return null;
+
     const handleFireInvites = async () => {
         if (participants.length === 0) return;
-        if (!window.confirm(`Send invites to ${participants.length} people?`)) return;
+        if (!window.confirm(`Ready to send messages to all ${participants.length} participants?`)) return;
         try {
             await axios.post('http://localhost:8000/invite', { participants });
-            alert("All invites sent!");
-        } catch (e) { alert("Error sending invites"); }
+            alert("✅ Messages sent successfully!");
+        } catch (e) { alert("Error sending messages"); }
     };
 
     const sendIndividual = async (index: number, p: Participant) => {
-        const msg = prompt(`Enter message for ${p.name}:`, p.customMessage || `Hey ${p.name}, join us!`);
+        const msg = prompt(`Enter message for ${p.name}:`, p.customMessage || `Hey ${p.name}, loved your audition for ${p.act}! Join our official group here: https://chat.whatsapp.com/EXAMPLE`);
         if (msg === null) return; // Cancelled
 
         // Update store with custom message
@@ -34,7 +37,6 @@ export const ParticipantsTable = () => {
             alert("Failed to send message.");
         }
     };
-
 
     return (
         <div className="w-full max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700">
@@ -63,7 +65,7 @@ export const ParticipantsTable = () => {
                         className="group flex items-center gap-2 px-6 py-2.5 bg-accent text-black font-semibold rounded-lg hover:bg-accent/90 transition-all active:scale-95"
                         onClick={handleFireInvites}
                     >
-                        <span>Fire Invites</span>
+                        <span>Send Message to All</span>
                         <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </button>
                 </div>
@@ -93,6 +95,7 @@ export const ParticipantsTable = () => {
                                     onEdit={() => setEditingId(idx)}
                                     onSave={() => setEditingId(null)}
                                     onChange={(field, val) => updateParticipant(idx, { [field]: val })}
+                                    onMessage={() => sendIndividual(idx, p)}
                                 />
                             ))}
                             {participants.length === 0 && (
@@ -123,7 +126,8 @@ const EditableRow = ({
     isEditing,
     onEdit,
     onSave,
-    onChange
+    onChange,
+    onMessage
 }: {
     index: number;
     data: Participant;
@@ -131,6 +135,7 @@ const EditableRow = ({
     onEdit: () => void;
     onSave: () => void;
     onChange: (field: keyof Participant, val: string) => void;
+    onMessage: () => void;
 }) => {
     const isSuspicious = data.phone.includes("??") || data.phone.length !== 10;
 
@@ -193,7 +198,7 @@ const EditableRow = ({
             </td>
 
             {/* Actions */}
-            <td className="p-4 text-right">
+            <td className="p-4 text-right flex items-center justify-end gap-1">
                 {isEditing ? (
                     <button
                         onClick={onSave}
@@ -211,8 +216,8 @@ const EditableRow = ({
                     </button>
                 )}
                 <button
-                    onClick={() => (window as any).sendIndividual(index, data)}
-                    className="p-1.5 rounded-md text-accent/60 hover:text-accent hover:bg-accent/10 transition-colors opacity-0 group-hover:opacity-100 ml-1"
+                    onClick={onMessage}
+                    className="p-1.5 rounded-md text-accent/80 hover:text-accent hover:bg-accent/10 transition-colors"
                     title="Send Custom Message"
                 >
                     <MessageCircle className="w-4 h-4" />

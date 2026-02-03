@@ -1,8 +1,30 @@
-Ollama Error: Server error '500 Internal Server Error' for url 'http://localhost:11434/api/chat'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
-Ollama Error: Server error '500 Internal Server Error' for url 'http://localhost:11434/api/chat'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
-Ollama Error: Server error '500 Internal Server Error' for url 'http://localhost:11434/api/chat'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
-Ollama Error: Server error '500 Internal Server Error' for url 'http://localhost:11434/api/chat'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500
+Ollama Error: All connection attempts failed
+
+Attempting to send to +919699497129 (Name: Sarthak Chavan)
+--- New Scan Request ---
+Raw Response:  ```json
+
+[  {    "name": "Shivanjali Jape",    "phone": "8830240112",    "act": "Khwab Dekhe"  },  {    "name": "Sanjeet Jadhav",    "phone": "8600323309",    "act": "Duet"  },  {    "name": "Rajesh Kakar",    "phone": "7598140112",    "act": "Dance"  },  {    "name": "Siddharth Jain",    "phone": "8600323309",    "act": "Duet"  },  {    "name": "Rajesh Kakar",    "phone": "7598140112",    "act": "Dance"  },  {    "name": "Siddharth Jain",    "phone": "8600323309",    "act": "Duet"  },  {    "name": "Rajesh Kakar",    "phone": "7598140112",    "act": "Dance"  },  {    "name": "Sanjeev Jadhav",    "phone": "8600323309",    "act": "Duet"  },  {    "name": "Rajesh Kakar",    "phone": "7598140112",    "act": "Dance"  },  {    "name": "Sanjeev Jadhav",    "phone": "8600323309",    "act": "Duet"  },  {    "name": "Rajesh Kakar",    "phone": "7598140112",    "act": "Dance"  }]
+``` 
+--- New Scan Request ---
+Ollama Error: 
+
+Attempting to send to +918830240112 (Name: SHIVANJALI VIVEK JAPE)
+
+Attempting to send to +918010115945 (Name: SANIKA KHAMKAR)
+
+Attempting to send to +917499447302 (Name: RUNAL BHALADHARE , MADHURA KENE, YOGESHWARI GAIKWAD, SHREYA DHENGE)
+
+Attempting to send to +918600323309 (Name: SANJEET JADHAV , KIRAN SURUSHE)
+--- New Scan Request ---
+Ollama Error: HTTPStatusError("Server error '500 Internal Server Error' for url 'http://127.0.0.1:11434/api/chat'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500")
+--- New Scan Request ---
+Ollama Error: ReadTimeout('')
+--- New Scan Request (Stream) ---
+Raw Response:  ```json
+[    {"name": "Shivam Jain", "phone": "9876543210", "act": "Duet"},    {"name": "Vishal Jain", "phone": "9876543210", "act": "Duet"},    {"name": "Siddharth Sharma", "phone": "9876543210", "act": "Duet"},    {"name": "Rohit Sharma", "phone": "9876543210", "act": "Duet"},    {"name": "Siddharth Jain", "phone": "9876543210", "act": "Duet"},    {"name": "Rohit Sharma", "phone": "9876543210", "act": "Duet"},    {"name": "Siddharth Jain", "phone": "9876543210", "act": "Duet"},    {"name": "Rohit Sharma", "phone": "9876543210", "act": "Duet"}  ]
+``` 
+--- New Scan Request (Stream) ---
+Raw Response:  ```json
+[    {"name": "Jay Chakravarty", "phone": "9876543210", "act": "Singing"},    {"name": "Rajesh Kishan", "phone": "9876543210", "act": "Duet"}  ]
+``` 

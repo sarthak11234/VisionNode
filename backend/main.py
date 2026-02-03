@@ -59,6 +59,12 @@ async def send_invites(request: InviteRequest):
     # In a real production app, this should be a BackgroundTask
     # checking if we want to block until done or return immediately.
     # For now, we await it to verify completion.
-    updated_participants = await send_invites_orchestrator(request.participants)
-    return {"status": "completed", "results": updated_participants}
+    print(f"📨 Received invite request for {len(request.participants)} participants")
+    try:
+        updated_participants = await send_invites_orchestrator(request.participants)
+        print("✅ Orchestrator finished successfully")
+        return {"status": "completed", "results": updated_participants}
+    except Exception as e:
+        print(f"🔥 Critical Error in Orchestrator: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
