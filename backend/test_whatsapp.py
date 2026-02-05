@@ -1,22 +1,24 @@
 import asyncio
-from schemas import Participant
-from services.whatsapp_service import send_invites_orchestrator
+from services.messaging.local_whatsapp import LocalMessageService
 
 async def test():
     print("Test: Starting WhatsApp Service Test...")
-    p = Participant(
-        name="Test User",
-        phone="1234567890", # Replace with user's number if they want real test, but this will fail validation likely inside service if we have checks
-        act="Testing",
-        custom_message="Hello from Python script!"
-    )
+    p = {
+        "name": "Test User",
+        "phone": "1234567890", 
+        "act": "Testing",
+        "customMessage": "Hello from Python script!",
+        "status": "pending"
+    }
     
-    # We need to mock or change the phone number validation in service if it checks for real numbers?
-    # Service checks: if '??' in p.phone or len(p.phone) < 10:
+    service = LocalMessageService()
+    # service.enable_sending = False # Uncomment for dry run
     
     try:
-        results = await send_invites_orchestrator([p])
-        print("Test Result:", results)
+        # Service expects list of dicts
+        stats = await service.send_batch([p])
+        print("Test Result:", stats)
+        print("Updated Participant:", p)
     except Exception as e:
         print(f"FAILED: {e}")
 

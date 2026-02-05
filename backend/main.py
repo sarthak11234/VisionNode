@@ -2,16 +2,22 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 from schemas import ExtractionResponse, Participant
-from services.ollama_client import analyze_image
-from services.whatsapp_service import send_invites_orchestrator
 from pydantic import BaseModel
 
+# Service Imports
+from services.vision.local_vision import LocalVisionService
+from services.messaging.local_whatsapp import LocalMessageService
+
 app = FastAPI(title="VisionNode Backend", version="1.0")
+
+# Service Initialization (Dependencies)
+vision_service = LocalVisionService()
+message_service = LocalMessageService()
 
 # CORS Setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict this to the frontend URL
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -24,25 +30,27 @@ def read_root():
 @app.post("/upload", response_model=ExtractionResponse)
 async def upload_sheet(file: UploadFile = File(...)):
     """
-    Uploads an image, processes it with Ollama Vision, and returns the extracted participants.
+    Uploads an image, processes it with Vision Service, and returns participants.
     """
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image")
     
     contents = await file.read()
     
-    # Process with Ollama
-    raw_data = await analyze_image(contents)
+    # Process with Vision Service
+    try:
+        raw_data = await vision_service.analyze_image(contents)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Vision Service Error: {str(e)}")
     
     # Validate and return
-    # We map raw dicts to our Pydantic models
     participants = []
     for item in raw_data:
-        # Basic normalization to match our schema keys if the model hallucinates slightly different keys
         p = Participant(
             name=item.get("name", "Unknown"),
             phone=str(item.get("phone", "")),
-            act=item.get("act", item.get("performance", "Unknown"))
+            act=item.get("act", item.get("performance", "Unknown")),
+            status=item.get("status", "pending")
         )
         participants.append(p)
         
@@ -54,17 +62,21 @@ class InviteRequest(BaseModel):
 @app.post("/invite")
 async def send_invites(request: InviteRequest):
     """
-    Triggers the background automation loop to send WhatsApp invites.
+    Triggers the messaging service to send invites.
     """
-    # In a real production app, this should be a BackgroundTask
-    # checking if we want to block until done or return immediately.
-    # For now, we await it to verify completion.
     print(f"📨 Received invite request for {len(request.participants)} participants")
+    
+    # Convert Pydantic models to Dicts for the service
+    # We use model_dump(by_alias=True) to handle any field aliases if needed
+    participants_data = [p.dict(by_alias=True) for p in request.participants]
+    
     try:
-        updated_participants = await send_invites_orchestrator(request.participants)
-        print("✅ Orchestrator finished successfully")
-        return {"status": "completed", "results": updated_participants}
+        # Pass dicts to the service (it modifies them in-place with status)
+        stats = await message_service.send_batch(participants_data)
+        print(f"✅ Service finished. Stats: {stats}")
+        
+        return {"status": "completed", "results": participants_data, "stats": stats}
     except Exception as e:
-        print(f"🔥 Critical Error in Orchestrator: {e}")
+        print(f"🔥 Critical Error in Messaging Service: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
