@@ -1,0 +1,40 @@
+TECH STACK SPECIFICATION: SHEETAGENT (AGENTIC LOGISTICS PLATFORM)
+
+1. FRONTEND (The Command Center)
+- Framework: Next.js 15+ (App Router)
+  - Purpose: High-speed routing and server-side rendering for complex data.
+- UI/UX Logic: TanStack Table v8 (Headless)
+  - Purpose: To build a fully custom, high-performance spreadsheet UI from scratch.
+- Styling: Tailwind CSS + Shadcn/UI (Customized to Dark/HexaCore theme).
+- Animations: Framer Motion
+  - Purpose: Real-time "pulse" effects and smooth row transitions during agent actions.
+- State Management: TanStack Query (React Query)
+  - Purpose: Synchronizing server state with the UI during heavy agent processing.
+
+2. BACKEND (The Agentic Engine)
+- Core API: FastAPI (Python)
+  - Purpose: Fast, asynchronous communication between the sheet and AI agents.
+- Agent Orchestration: LangGraph (by LangChain)
+  - Purpose: To manage complex, circular agent workflows (e.g., Retry-on-failure for WhatsApp).
+- LLM Integration: OpenAI GPT-4o-mini or Claude 3.5 Sonnet
+  - Purpose: Interpreting user commands ("Clean this sheet") and drafting messages.
+- Task Queue: Celery + Redis
+  - Purpose: Offloading long-running tasks like bulk emailing or group creation to background workers.
+
+3. DATABASE & STORAGE
+- Database: PostgreSQL (with JSONB support)
+  - Purpose: Storing dynamic "Sheet" schemas where users can add columns without migrations.
+- Real-time Sync: Supabase Realtime / WebSockets
+  - Purpose: Live updates across multiple devices when an agent modifies a cell.
+- Caching: Redis
+  - Purpose: Storing active agent sessions and transient audition states.
+
+4. COMMUNICATION LAYERS (Agent Tooling)
+- WhatsApp: Twilio WhatsApp API or Meta Business Cloud API.
+- Email: Resend (with React-Email for high-end styling).
+- Authentication: Clerk (for rapid, secure multi-user management).
+
+5. DEPLOYMENT & DEVOPS
+- Containerization: Docker + Docker Compose.
+- Hosting: Vercel (Frontend) + AWS EC2 or Railway (Backend/Workers).
+- CI/CD: GitHub Actions.
