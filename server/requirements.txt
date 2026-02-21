@@ -1,0 +1,29 @@
+# Core API
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.1
+python-multipart==0.0.20
+
+# Database
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+alembic==1.14.1
+psycopg2-binary==2.9.10
+
+# Agent Engine
+langgraph==0.2.60
+langchain-core==0.3.28
+langchain-openai==0.3.0
+
+# Task Queue
+celery[redis]==5.4.0
+redis==5.2.1
+
+# Communication
+twilio==9.4.3
+resend==2.7.0
+
+# Utilities
+python-dotenv==1.0.1
+httpx==0.28.1
