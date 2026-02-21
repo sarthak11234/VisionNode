@@ -22,7 +22,9 @@ class Settings(BaseSettings):
     DEBUG: bool = True
 
     # ── Database ─────────────────────────────────────────
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/sheetagent"
+    DATABASE_URL: str = (
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/sheetagent"
+    )
 
     # ── Redis ────────────────────────────────────────────
     REDIS_URL: str = "redis://localhost:6379/0"

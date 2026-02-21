@@ -38,7 +38,7 @@ jobs:
           cache-dependency-path: client/package-lock.json
 
       - run: npm ci
-      - run: npx next lint
+      - run: npx next lint --dir src
       - run: npx tsc --noEmit
 
   # ── Backend Lint ─────────────────────────────────────
@@ -57,5 +57,5 @@ jobs:
           cache: "pip"
 
       - run: pip install ruff
-      - run: ruff check app/
-      - run: ruff format --check app/
+      - run: python -m ruff check app/
+      - run: python -m ruff format --check app/

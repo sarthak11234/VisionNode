@@ -24,8 +24,8 @@ from app.core.config import settings
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=settings.DEBUG,  # Log SQL queries in dev mode
-    pool_size=20,         # Max concurrent connections
-    max_overflow=10,      # Extra connections under load
+    pool_size=20,  # Max concurrent connections
+    max_overflow=10,  # Extra connections under load
 )
 
 async_session = async_sessionmaker(
