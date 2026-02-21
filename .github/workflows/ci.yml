@@ -38,7 +38,7 @@ jobs:
           cache-dependency-path: client/package-lock.json
 
       - run: npm ci
-      - run: npx next lint --dir src
+      - run: npx eslint src/
       - run: npx tsc --noEmit
 
   # ── Backend Lint ─────────────────────────────────────
