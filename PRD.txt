@@ -1,0 +1,64 @@
+PRODUCT REQUIREMENTS DOCUMENT (PRD)
+
+Project Name:  SheetAgent (Agentic Spreadsheet Platform)
+Status:        Draft / Initial Concept
+Target User:   College Fest Organizers, Club Leads, Recruitment Teams
+
+--------------------------------------------------------------------------------
+1. EXECUTIVE SUMMARY
+A platform that combines the flexibility of Google Sheets with the power of 
+autonomous AI agents. The system allows users to manage audition/registration 
+data and triggers agents to handle communication (WhatsApp, Email, Group 
+Creation) based on row-level status changes.
+
+--------------------------------------------------------------------------------
+2. USER PROBLEMS & GOALS
+- Problem: Manual data cleaning and switching between Sheets and WhatsApp/Email.
+- Problem: High latency in informing candidates of their status.
+- Goal: Create a "State-Aware" spreadsheet where the data *is* the trigger.
+- Goal: Centralize audition workflows into a single agent-controlled dashboard.
+
+--------------------------------------------------------------------------------
+3. FUNCTIONAL REQUIREMENTS (FRs)
+
+FR1: Dynamic Spreadsheet Engine
+- Users can create "Workspaces" (e.g., "Dance Auditions 2026").
+- Support for dynamic column addition (String, Number, Dropdown, Boolean).
+- Real-time cell editing with auto-save to a FastAPI backend.
+
+FR2: Agent Orchestration Layer
+- An "Agent Sidebar" to configure automation rules.
+- Rule Example: "If column 'Status' == 'Selected', send WhatsApp Template 'Welcome_Msg'".
+- Ability for the Agent to read the entire sheet context to provide summaries.
+
+FR3: Communication Integrations
+- WhatsApp: Integration with Twilio/Meta API for 1-to-1 messaging.
+- WhatsApp Groups: Agent generates and distributes group invite links.
+- Email: Integration with Resend/Nodemailer for official PDF/Invite delivery.
+
+FR4: Data Cleaning Tools
+- One-click "De-duplicate" based on Roll No or Email.
+- Format normalization (ensuring phone numbers have country codes).
+
+--------------------------------------------------------------------------------
+4. TECHNICAL ARCHITECTURE
+
+
+
+A. Frontend: React.js + TanStack Table (for high-performance data grids).
+B. Backend: FastAPI (Modular routers for Sheets, Agents, and Integrations).
+C. Database: PostgreSQL with JSONB (to store the flexible column schemas).
+D. Agent Framework: LangGraph (to manage the state-machine logic of "Check -> Trigger -> Confirm").
+
+--------------------------------------------------------------------------------
+5. USER FLOW
+1. Admin creates a sheet and imports CSV or adds columns manually.
+2. Admin defines an "Agent Rule" (e.g., 'Notify' action on 'Status' change).
+3. As judges enter scores/status in the sheet, the Agent queues messages.
+4. Agent provides a "Log" of successful/failed communications.
+
+--------------------------------------------------------------------------------
+6. SUCCESS METRICS
+- Reduce time-to-contact from hours to seconds.
+- 0% manual errors in copying phone numbers to WhatsApp.
+- Successful automated creation of participant groups.
