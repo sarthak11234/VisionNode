@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import AppShell from "./components/AppShell";
 import DataGrid, { type ColumnSchema, type RowData } from "./components/DataGrid";
 import AgentSidebar, { type AgentRule } from "./components/AgentSidebar";
+import ActionBar from "./components/ActionBar";
 
 /*
  * DEMO DATA — mimics a college-fest audition sheet.
@@ -33,6 +35,8 @@ const demoRules: AgentRule[] = [
 ];
 
 export default function Home() {
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
   return (
     <AppShell>
       <DataGrid
@@ -41,17 +45,20 @@ export default function Home() {
         onCellEdit={(rowId, col, val) => {
           console.log(`Edit: row=${rowId} col=${col} val=${val}`);
         }}
-        onRowSelect={(ids) => {
-          console.log("Selected:", ids);
-        }}
+        onRowSelect={setSelectedIds}
       />
       <AgentSidebar
         rules={demoRules}
         onToggleRule={(id, enabled) => console.log(`Toggle: ${id} → ${enabled}`)}
         onAddRule={() => console.log("Add rule clicked")}
       />
+      <ActionBar
+        selectedCount={selectedIds.length}
+        onBulkEmail={() => console.log("Bulk email:", selectedIds)}
+        onBulkWhatsApp={() => console.log("Bulk WhatsApp:", selectedIds)}
+        onBulkDelete={() => console.log("Bulk delete:", selectedIds)}
+        onClearSelection={() => setSelectedIds([])}
+      />
     </AppShell>
   );
 }
-
-
