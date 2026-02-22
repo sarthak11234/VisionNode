@@ -9,6 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app.routers import workspaces, sheets, rows, agent_rules
 
 app = FastAPI(
     title="SheetAgent API",
@@ -19,13 +20,6 @@ app = FastAPI(
 # ---------------------------------------------------------------------------
 # CORS — Cross-Origin Resource Sharing
 # ---------------------------------------------------------------------------
-# Why: The Next.js frontend (localhost:3000) and FastAPI backend (localhost:8000)
-# run on different ports. Browsers block cross-origin requests by default.
-# CORS headers tell the browser "it's okay, this origin is allowed."
-#
-# Alternative: Serve both from the same origin via a reverse proxy (nginx).
-#   Pros: No CORS needed. Cons: More complex dev setup.
-# ---------------------------------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
@@ -33,6 +27,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ---------------------------------------------------------------------------
+# Routers — All API endpoints under /api/v1
+# ---------------------------------------------------------------------------
+API_PREFIX = "/api/v1"
+
+app.include_router(workspaces.router, prefix=API_PREFIX)
+app.include_router(sheets.router, prefix=API_PREFIX)
+app.include_router(rows.router, prefix=API_PREFIX)
+app.include_router(agent_rules.router, prefix=API_PREFIX)
 
 
 @app.get("/health")
