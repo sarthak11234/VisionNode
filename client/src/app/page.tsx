@@ -2,6 +2,7 @@
 
 import AppShell from "./components/AppShell";
 import DataGrid, { type ColumnSchema, type RowData } from "./components/DataGrid";
+import AgentSidebar, { type AgentRule } from "./components/AgentSidebar";
 
 /*
  * DEMO DATA — mimics a college-fest audition sheet.
@@ -25,6 +26,12 @@ const demoRows: RowData[] = [
   { id: "5", data: { name: "Dev Patel", email: "dev@fest.in", phone: "9556677889", talent: "Magic", score: "81", status: "Pending" } },
 ];
 
+const demoRules: AgentRule[] = [
+  { id: "r1", triggerColumn: "status", triggerValue: "Shortlisted", actionType: "email", enabled: true },
+  { id: "r2", triggerColumn: "status", triggerValue: "Shortlisted", actionType: "whatsapp", enabled: true },
+  { id: "r3", triggerColumn: "score", triggerValue: "90", actionType: "create_group", enabled: false },
+];
+
 export default function Home() {
   return (
     <AppShell>
@@ -37,6 +44,11 @@ export default function Home() {
         onRowSelect={(ids) => {
           console.log("Selected:", ids);
         }}
+      />
+      <AgentSidebar
+        rules={demoRules}
+        onToggleRule={(id, enabled) => console.log(`Toggle: ${id} → ${enabled}`)}
+        onAddRule={() => console.log("Add rule clicked")}
       />
     </AppShell>
   );
