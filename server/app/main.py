@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.routers import workspaces, sheets, rows, agent_rules
+from app.routers import workspaces, sheets, rows, agent_rules, ws
 
 app = FastAPI(
     title="SheetAgent API",
@@ -37,6 +37,7 @@ app.include_router(workspaces.router, prefix=API_PREFIX)
 app.include_router(sheets.router, prefix=API_PREFIX)
 app.include_router(rows.router, prefix=API_PREFIX)
 app.include_router(agent_rules.router, prefix=API_PREFIX)
+app.include_router(ws.router)  # WebSocket — no prefix (ws://host/ws/sheet/{id})
 
 
 @app.get("/health")
