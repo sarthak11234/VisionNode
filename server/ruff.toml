@@ -1,0 +1,7 @@
+target-version = "py312"
+
+[lint.per-file-ignores]
+# F821: Undefined name — false positives on SQLAlchemy forward-reference
+# strings in Mapped[...] relationship type hints.
+# SQLAlchemy resolves these at runtime, not import time.
+"app/models/*.py" = ["F821"]
