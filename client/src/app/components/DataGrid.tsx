@@ -32,12 +32,13 @@
  *   looks more like Excel but terrible for performance with 1000+ cells.
  */
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import {
     useReactTable,
     getCoreRowModel,
     flexRender,
     type ColumnDef,
+    type CellContext,
 } from "@tanstack/react-table";
 
 /* ── Types ────────────────────────────────────────────── */
@@ -174,26 +175,30 @@ export default function DataGrid({
     const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
 
     // Build TanStack column defs from our column schema
-    const tableColumns: ColumnDef<RowData>[] = [
-        checkboxColumn,
-        ...columns.map((col) => ({
-            id: col.key,
-            accessorFn: (row: RowData) => row.data[col.key] ?? "",
-            header: () => (
-                <span style={{ fontFamily: "var(--font-heading)", fontWeight: 600, fontSize: 12, textTransform: "uppercase" as const, letterSpacing: "0.05em" }}>
-                    {col.label}
-                </span>
-            ),
-            cell: ({ getValue, row }: { getValue: () => unknown; row: { original: RowData } }) => (
-                <EditableCell
-                    value={String(getValue())}
-                    rowId={row.original.id}
-                    columnKey={col.key}
-                    onCommit={onCellEdit}
-                />
-            ),
-        })),
-    ];
+    // useMemo prevents re-creation on every render (react-hooks/exhaustive-deps)
+    const tableColumns: ColumnDef<RowData>[] = useMemo(
+        () => [
+            checkboxColumn,
+            ...columns.map((col) => ({
+                id: col.key,
+                accessorFn: (row: RowData) => row.data[col.key] ?? "",
+                header: () => (
+                    <span style={{ fontFamily: "var(--font-heading)", fontWeight: 600, fontSize: 12, textTransform: "uppercase" as const, letterSpacing: "0.05em" }}>
+                        {col.label}
+                    </span>
+                ),
+                cell: (info: CellContext<RowData, unknown>) => (
+                    <EditableCell
+                        value={String(info.getValue())}
+                        rowId={info.row.original.id}
+                        columnKey={col.key}
+                        onCommit={onCellEdit}
+                    />
+                ),
+            })),
+        ],
+        [columns, onCellEdit]
+    );
 
     const table = useReactTable({
         data: rows,
