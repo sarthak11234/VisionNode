@@ -15,6 +15,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
+from app.core.ws_manager import manager
 from app.schemas.row import RowCreate, RowUpdate, RowBulkCreate, RowResponse
 from app.services import row_service
 
@@ -32,7 +33,15 @@ async def create_row(
     db: AsyncSession = Depends(get_db),
 ):
     """Create a single row in a sheet."""
-    return await row_service.create(db, sheet_id, payload)
+    row = await row_service.create(db, sheet_id, payload)
+    await manager.broadcast(
+        sheet_id,
+        {
+            "event": "row_created",
+            "row": RowResponse.model_validate(row).model_dump(mode="json"),
+        },
+    )
+    return row
 
 
 @router.post(
@@ -70,15 +79,26 @@ async def update_row(
     row = await row_service.update(db, row_id, payload)
     if not row:
         raise HTTPException(status_code=404, detail="Row not found")
+    await manager.broadcast(
+        row.sheet_id,
+        {
+            "event": "row_updated",
+            "row": RowResponse.model_validate(row).model_dump(mode="json"),
+        },
+    )
     return row
 
 
 @router.delete("/rows/{row_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_row(row_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     """Delete a single row."""
-    deleted = await row_service.delete(db, row_id)
-    if not deleted:
+    # Fetch the row first to get sheet_id for broadcast
+    row = await row_service.get_by_id(db, row_id)
+    if not row:
         raise HTTPException(status_code=404, detail="Row not found")
+    sheet_id = row.sheet_id
+    await row_service.delete(db, row_id)
+    await manager.broadcast(sheet_id, {"event": "row_deleted", "row_id": str(row_id)})
 
 
 # ---------------------------------------------------------------------------
