@@ -57,6 +57,13 @@ class ColumnUpdate(BaseModel):
 
     columns: list[ColumnDef]
 
+class BulkActionRequest(BaseModel):
+    """Payload for triggering bulk actions from the frontend."""
+    
+    row_ids: list[uuid.UUID]
+    message: str | None = None
+    subject: str | None = None
+
 
 # ── Response Schemas ─────────────────────────────────────
 

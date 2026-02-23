@@ -14,6 +14,7 @@ from app.schemas.sheet import (
     ColumnUpdate,
     SheetResponse,
     SheetListResponse,
+    BulkActionRequest,
 )
 from app.services import sheet_service
 
@@ -87,3 +88,33 @@ async def delete_sheet(sheet_id: uuid.UUID, db: AsyncSession = Depends(get_db)):
     deleted = await sheet_service.delete(db, sheet_id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Sheet not found")
+
+# ── Bulk Actions (Dummy Implementations for Phase 3.5) ──
+
+@router.post("/sheets/{sheet_id}/bulk-email")
+async def bulk_email(
+    sheet_id: uuid.UUID,
+    payload: BulkActionRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Trigger a bulk email action for selected rows."""
+    # In a real app, this would enqueue celery tasks for each row
+    return {
+        "status": "success", 
+        "message": f"Queued {len(payload.row_ids)} emails.",
+        "sheet_id": sheet_id
+    }
+
+@router.post("/sheets/{sheet_id}/bulk-whatsapp")
+async def bulk_whatsapp(
+    sheet_id: uuid.UUID,
+    payload: BulkActionRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Trigger a bulk WhatsApp message for selected rows."""
+    # In a real app, this would enqueue celery tasks for each row
+    return {
+        "status": "success", 
+        "message": f"Queued {len(payload.row_ids)} WhatsApp messages.",
+        "sheet_id": sheet_id
+    }
