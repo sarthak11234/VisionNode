@@ -82,13 +82,10 @@ function EditableCell({
         if (editing) inputRef.current?.focus();
     }, [editing]);
 
-    // Sync external value changes (e.g. from WebSocket) without setState-in-effect.
-    // Track previous external value via ref — only reset draft when value actually changes.
-    const prevValueRef = useRef(value);
-    if (prevValueRef.current !== value) {
-        prevValueRef.current = value;
-        if (!editing) setDraft(value);
-    }
+    const startEditing = useCallback(() => {
+        setDraft(value);
+        setEditing(true);
+    }, [value]);
 
     const commit = useCallback(() => {
         setEditing(false);
@@ -129,7 +126,7 @@ function EditableCell({
 
     return (
         <div
-            onDoubleClick={() => setEditing(true)}
+            onDoubleClick={startEditing}
             style={{
                 padding: "4px 8px",
                 cursor: "text",
