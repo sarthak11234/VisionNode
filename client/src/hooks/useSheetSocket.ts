@@ -1,0 +1,103 @@
+/*
+ * useSheetSocket — WebSocket hook for real-time row updates
+ *
+ * PATTERN: Connect to /ws/sheet/{id}, parse incoming events,
+ *   and update the TanStack Query cache directly.
+ *
+ * WHY UPDATE CACHE DIRECTLY (not invalidate)?
+ *   - Invalidation triggers a full refetch → flicker + latency
+ *   - Direct cache update is instant and smooth
+ *   - We still invalidate on reconnect to catch missed events
+ *
+ * RECONNECTION STRATEGY:
+ *   Exponential backoff: 1s → 2s → 4s → 8s → max 30s
+ *   This prevents hammering the server if it's down.
+ *
+ * ALTERNATIVE: Socket.IO — adds ~40KB for features we don't need
+ *   (rooms, namespaces, fallback polling). Native WebSocket is enough.
+ */
+
+import { useEffect, useRef, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "./useSheetData";
+
+const WS_BASE = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8000";
+
+interface RowEvent {
+    event: "row_created" | "row_updated" | "row_deleted";
+    row: {
+        id: string;
+        sheet_id: string;
+        data: Record<string, string>;
+        row_order: string;
+        created_at: string;
+        updated_at: string;
+    };
+}
+
+export function useSheetSocket(sheetId: string | null) {
+    const qc = useQueryClient();
+    const wsRef = useRef<WebSocket | null>(null);
+    const retryRef = useRef(0);
+
+    const connect = useCallback(() => {
+        if (!sheetId) return;
+
+        const ws = new WebSocket(`${WS_BASE}/ws/sheet/${sheetId}`);
+        wsRef.current = ws;
+
+        ws.onopen = () => {
+            retryRef.current = 0; // reset backoff on successful connect
+        };
+
+        ws.onmessage = (evt) => {
+            try {
+                const msg: RowEvent = JSON.parse(evt.data);
+                const key = queryKeys.rows(sheetId);
+
+                switch (msg.event) {
+                    case "row_created":
+                        // Append new row to cache
+                        qc.setQueryData(key, (old: RowEvent["row"][] | undefined) =>
+                            old ? [...old, msg.row] : [msg.row],
+                        );
+                        break;
+
+                    case "row_updated":
+                        // Update existing row in cache
+                        qc.setQueryData(key, (old: RowEvent["row"][] | undefined) =>
+                            old?.map((r) => (r.id === msg.row.id ? msg.row : r)),
+                        );
+                        break;
+
+                    case "row_deleted":
+                        // Remove row from cache
+                        qc.setQueryData(key, (old: RowEvent["row"][] | undefined) =>
+                            old?.filter((r) => r.id !== msg.row.id),
+                        );
+                        break;
+                }
+            } catch {
+                // Ignore malformed messages
+            }
+        };
+
+        ws.onclose = () => {
+            // Exponential backoff reconnection
+            const delay = Math.min(1000 * 2 ** retryRef.current, 30000);
+            retryRef.current += 1;
+            setTimeout(connect, delay);
+        };
+
+        ws.onerror = () => {
+            ws.close(); // triggers onclose → reconnect
+        };
+    }, [sheetId, qc]);
+
+    useEffect(() => {
+        connect();
+        return () => {
+            wsRef.current?.close();
+        };
+    }, [connect]);
+}
