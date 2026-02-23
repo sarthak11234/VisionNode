@@ -82,10 +82,13 @@ function EditableCell({
         if (editing) inputRef.current?.focus();
     }, [editing]);
 
-    // Sync external value changes (e.g. from WebSocket)
-    useEffect(() => {
+    // Sync external value changes (e.g. from WebSocket) without setState-in-effect.
+    // Track previous external value via ref — only reset draft when value actually changes.
+    const prevValueRef = useRef(value);
+    if (prevValueRef.current !== value) {
+        prevValueRef.current = value;
         if (!editing) setDraft(value);
-    }, [value, editing]);
+    }
 
     const commit = useCallback(() => {
         setEditing(false);
@@ -200,22 +203,27 @@ export default function DataGrid({
         [columns, onCellEdit]
     );
 
-    /* eslint-disable react-hooks/exhaustive-deps -- useReactTable manages its own reactivity */
+    const handleSelectionChange = useCallback(
+        (updater: React.SetStateAction<Record<string, boolean>>) => {
+            setRowSelection((prev) => {
+                const next = typeof updater === "function" ? updater(prev) : updater;
+                // Notify parent of selected row IDs
+                const selectedIds = Object.keys(next).filter((k) => next[k]).map((idx) => rows[Number(idx)]?.id).filter(Boolean);
+                onRowSelect?.(selectedIds);
+                return next;
+            });
+        },
+        [rows, onRowSelect],
+    );
+
     const table = useReactTable({
         data: rows,
         columns: tableColumns,
         state: { rowSelection },
-        onRowSelectionChange: (updater) => {
-            const next = typeof updater === "function" ? updater(rowSelection) : updater;
-            setRowSelection(next);
-            // Notify parent of selected row IDs
-            const selectedIds = Object.keys(next).filter((k) => next[k]).map((idx) => rows[Number(idx)]?.id).filter(Boolean);
-            onRowSelect?.(selectedIds);
-        },
+        onRowSelectionChange: handleSelectionChange,
         getCoreRowModel: getCoreRowModel(),
         getRowId: (row) => row.id,
     });
-    /* eslint-enable react-hooks/exhaustive-deps */
 
     return (
         <div style={{ overflowX: "auto", borderRadius: 8, border: "1px solid var(--border-subtle)" }}>
