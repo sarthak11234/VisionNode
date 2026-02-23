@@ -17,7 +17,7 @@
  *   (rooms, namespaces, fallback polling). Native WebSocket is enough.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "./useSheetData";
 
@@ -35,10 +35,25 @@ interface RowEvent {
     };
 }
 
+interface AgentLogEvent {
+    event: "agent_log";
+    log: {
+        id: string;
+        rule_id: string;
+        row_id: string;
+        status: string;
+        message: string;
+        timestamp: string;
+    };
+}
+
+type WsEvent = RowEvent | AgentLogEvent;
+
 export function useSheetSocket(sheetId: string | null) {
     const qc = useQueryClient();
     const wsRef = useRef<WebSocket | null>(null);
     const retryCountRef = useRef(0);
+    const [agentLogs, setAgentLogs] = useState<AgentLogEvent["log"][]>([]);
 
     useEffect(() => {
         if (!sheetId) return;
@@ -58,7 +73,13 @@ export function useSheetSocket(sheetId: string | null) {
 
             ws.onmessage = (evt) => {
                 try {
-                    const msg: RowEvent = JSON.parse(evt.data);
+                    const msg: WsEvent = JSON.parse(evt.data);
+
+                    if (msg.event === "agent_log") {
+                        setAgentLogs(prev => [...prev, msg.log].slice(-50)); // Keep last 50 logs
+                        return;
+                    }
+
                     const key = queryKeys.rows(sheetId!);
 
                     switch (msg.event) {
@@ -105,4 +126,6 @@ export function useSheetSocket(sheetId: string | null) {
             wsRef.current?.close();
         };
     }, [sheetId, qc]);
+
+    return { agentLogs };
 }
