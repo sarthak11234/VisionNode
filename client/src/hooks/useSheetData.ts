@@ -91,6 +91,14 @@ export function useCreateWorkspace() {
 
 /* ── Sheet Hooks ──────────────────────────────────────── */
 
+export function useSheets(workspaceId: string | null) {
+    return useQuery({
+        queryKey: queryKeys.sheets(workspaceId ?? ""),
+        queryFn: () => api.get<SheetResponse[]>(`/workspaces/${workspaceId}/sheets`),
+        enabled: !!workspaceId,
+    });
+}
+
 export function useSheet(sheetId: string | null) {
     return useQuery({
         queryKey: queryKeys.sheet(sheetId ?? ""),
@@ -189,6 +197,28 @@ export function useImportCSV(sheetId: string) {
     });
 }
 
+/* ── Bulk Action Hooks ────────────────────────────────── */
+
+export function useBulkEmail(sheetId: string) {
+    return useMutation({
+        mutationFn: (rowIds: string[]) =>
+            api.post<{ status: string; message: string; sheet_id: string }>(
+                `/sheets/${sheetId}/bulk-email`,
+                { row_ids: rowIds }
+            ),
+    });
+}
+
+export function useBulkWhatsApp(sheetId: string) {
+    return useMutation({
+        mutationFn: (rowIds: string[]) =>
+            api.post<{ status: string; message: string; sheet_id: string }>(
+                `/sheets/${sheetId}/bulk-whatsapp`,
+                { row_ids: rowIds }
+            ),
+    });
+}
+
 /* ── Agent Rule Hooks ─────────────────────────────────── */
 
 export function useAgentRules(sheetId: string | null) {
@@ -208,6 +238,26 @@ export function useToggleRule() {
         onSuccess: (data) => {
             qc.invalidateQueries({
                 queryKey: queryKeys.agentRules(data.sheet_id),
+            });
+        },
+    });
+}
+
+export function useCreateRule(sheetId: string) {
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (data: Omit<AgentRuleResponse, "id" | "sheet_id" | "enabled" | "action_config">) =>
+            api.post<AgentRuleResponse>("/agent-rules", {
+                sheet_id: sheetId,
+                trigger_column: data.trigger_column,
+                trigger_value: data.trigger_value,
+                action_type: data.action_type,
+                action_config: {}, // Optional for now
+                enabled: true,
+            }),
+        onSuccess: () => {
+            qc.invalidateQueries({
+                queryKey: queryKeys.agentRules(sheetId),
             });
         },
     });

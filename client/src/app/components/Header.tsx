@@ -19,12 +19,14 @@ interface HeaderProps {
     activeAgents?: number;
     latencyMs?: number;
     sheetName?: string;
+    onImportCsv?: (file: File) => void;
 }
 
 export default function Header({
     activeAgents = 0,
     latencyMs = 24,
     sheetName = "Untitled Sheet",
+    onImportCsv,
 }: HeaderProps) {
     return (
         <header
@@ -59,6 +61,47 @@ export default function Header({
 
             {/* Right — System stats */}
             <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                {/* Import CSV Button */}
+                {onImportCsv && (
+                    <div style={{ position: "relative" }}>
+                        <input
+                            type="file"
+                            accept=".csv"
+                            id="csv-upload"
+                            style={{ display: "none" }}
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    onImportCsv(file);
+                                    e.target.value = ""; // reset for subsequent uploads
+                                }
+                            }}
+                        />
+                        <label
+                            htmlFor="csv-upload"
+                            style={{
+                                background: "rgba(255, 255, 255, 0.05)",
+                                border: "1px solid rgba(255, 255, 255, 0.1)",
+                                color: "var(--text-secondary)",
+                                padding: "4px 12px",
+                                borderRadius: 6,
+                                cursor: "pointer",
+                                transition: "all 0.2s ease",
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+                                e.currentTarget.style.color = "#fff";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = "rgba(255, 255, 255, 0.05)";
+                                e.currentTarget.style.color = "var(--text-secondary)";
+                            }}
+                        >
+                            📤 Import CSV
+                        </label>
+                    </div>
+                )}
+
                 {/* Active Agents badge */}
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     <span
