@@ -18,14 +18,21 @@ import { useState, useCallback } from "react";
 import AppShell from "./components/AppShell";
 import DataGrid, { type ColumnSchema, type RowData } from "./components/DataGrid";
 import AgentSidebar, { type AgentRule } from "./components/AgentSidebar";
+import Header from "./components/Header";
 import ActionBar from "./components/ActionBar";
 import {
+  useWorkspaces,
+  useSheets,
   useSheet,
   useRows,
   useMutateRow,
   useDeleteRow,
   useAgentRules,
   useToggleRule,
+  useCreateRule,
+  useImportCSV,
+  useBulkEmail,
+  useBulkWhatsApp
 } from "@/hooks/useSheetData";
 import { useSheetSocket } from "@/hooks/useSheetSocket";
 
@@ -57,8 +64,15 @@ const demoRules: AgentRule[] = [
 /* ── Page Component ───────────────────────────────────── */
 
 export default function Home() {
-  // TODO: Replace with dynamic sheet selection (Phase 3 polish)
-  const [sheetId] = useState<string | null>(null);
+  // Fetch default sheet for E2E testing
+  const { data: workspaces } = useWorkspaces();
+  const firstWorkspaceId = workspaces?.[0]?.id ?? null;
+
+  const { data: sheets } = useSheets(firstWorkspaceId);
+  const firstSheetId = sheets?.[0]?.id ?? null;
+
+  const [selectedSheetId, setSelectedSheetId] = useState<string | null>(null);
+  const sheetId = selectedSheetId ?? firstSheetId;
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // Data hooks — enabled only when sheetId is set
@@ -68,9 +82,13 @@ export default function Home() {
   const mutateRow = useMutateRow(sheetId ?? "");
   const deleteRow = useDeleteRow(sheetId ?? "");
   const toggleRule = useToggleRule();
+  const createRule = useCreateRule(sheetId ?? "");
+  const importCsv = useImportCSV(sheetId ?? "");
+  const bulkEmail = useBulkEmail(sheetId ?? "");
+  const bulkWhatsApp = useBulkWhatsApp(sheetId ?? "");
 
   // WebSocket for live updates
-  useSheetSocket(sheetId);
+  const { agentLogs } = useSheetSocket(sheetId);
 
   // Resolve data: API if connected, demo as fallback
   const columns: ColumnSchema[] = (sheet?.column_schema as ColumnSchema[]) ?? demoColumns;
@@ -107,6 +125,14 @@ export default function Home() {
 
   return (
     <AppShell>
+      <Header
+        sheetName={sheet?.name ?? "Demo Sheet"}
+        activeAgents={rules.filter(r => r.enabled).length}
+        latencyMs={24} // TODO: Implement real ping calculation
+        onImportCsv={(file) => {
+          if (sheetId) importCsv.mutate(file);
+        }}
+      />
       <DataGrid
         columns={columns}
         rows={rows}
@@ -115,6 +141,7 @@ export default function Home() {
       />
       <AgentSidebar
         rules={rules}
+        columns={columns}
         onToggleRule={(id, enabled) => {
           if (sheetId) {
             toggleRule.mutate({ ruleId: id, enabled });
@@ -122,12 +149,27 @@ export default function Home() {
             console.log(`[demo] Toggle: ${id} → ${enabled}`);
           }
         }}
-        onAddRule={() => console.log("Add rule clicked")}
+        onAddRule={(rule) => {
+          if (sheetId) {
+            createRule.mutate({
+              trigger_column: rule.triggerColumn,
+              trigger_value: rule.triggerValue,
+              action_type: rule.actionType,
+            });
+          }
+        }}
+        logs={agentLogs}
       />
       <ActionBar
         selectedCount={selectedIds.length}
-        onBulkEmail={() => console.log("Bulk email:", selectedIds)}
-        onBulkWhatsApp={() => console.log("Bulk WhatsApp:", selectedIds)}
+        onBulkEmail={() => {
+          if (sheetId) bulkEmail.mutate(selectedIds);
+          setSelectedIds([]);
+        }}
+        onBulkWhatsApp={() => {
+          if (sheetId) bulkWhatsApp.mutate(selectedIds);
+          setSelectedIds([]);
+        }}
         onBulkDelete={handleBulkDelete}
         onClearSelection={() => setSelectedIds([])}
       />

@@ -21,7 +21,7 @@
  *   This creates the frosted-glass look from Design.txt §4.
  */
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 /* ── Types ────────────────────────────────────────────── */
 
@@ -36,7 +36,9 @@ export interface AgentRule {
 interface AgentSidebarProps {
     rules: AgentRule[];
     onToggleRule?: (ruleId: string, enabled: boolean) => void;
-    onAddRule?: () => void;
+    onAddRule?: (rule: Omit<AgentRule, "id" | "enabled">) => void;
+    columns?: { key: string; label: string }[];
+    logs?: { id: string; rule_id: string; row_id: string; status: string; message: string; timestamp: string }[];
 }
 
 /* ── Action Type Config ───────────────────────────────── */
@@ -49,8 +51,30 @@ const actionMeta: Record<string, { label: string; color: string; icon: string }>
 
 /* ── Component ────────────────────────────────────────── */
 
-export default function AgentSidebar({ rules, onToggleRule, onAddRule }: AgentSidebarProps) {
+export default function AgentSidebar({ rules, onToggleRule, onAddRule, columns = [], logs = [] }: AgentSidebarProps) {
     const [open, setOpen] = useState(false);
+    const [isAdding, setIsAdding] = useState(false);
+    const logContainerRef = useRef<HTMLDivElement>(null);
+
+    // Auto-scroll logs to bottom
+    useEffect(() => {
+        if (logContainerRef.current) {
+            logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+        }
+    }, [logs]);
+
+    // Form State
+    const [triggerColumn, setTriggerColumn] = useState("");
+    const [triggerValue, setTriggerValue] = useState("");
+    const [actionType, setActionType] = useState<AgentRule["actionType"]>("email");
+
+    const handleSaveRule = () => {
+        if (!triggerColumn || !triggerValue) return;
+        onAddRule?.({ triggerColumn, triggerValue, actionType });
+        setIsAdding(false);
+        setTriggerColumn("");
+        setTriggerValue("");
+    };
 
     return (
         <>
@@ -123,10 +147,10 @@ export default function AgentSidebar({ rules, onToggleRule, onAddRule }: AgentSi
                         🤖 Agent Rules
                     </h2>
                     <button
-                        onClick={onAddRule}
+                        onClick={() => setIsAdding(!isAdding)}
                         style={{
-                            background: "var(--accent)",
-                            border: "none",
+                            background: isAdding ? "rgba(255, 255, 255, 0.1)" : "var(--accent)",
+                            border: isAdding ? "1px solid rgba(255, 255, 255, 0.2)" : "none",
                             color: "#fff",
                             padding: "6px 12px",
                             borderRadius: 6,
@@ -136,9 +160,73 @@ export default function AgentSidebar({ rules, onToggleRule, onAddRule }: AgentSi
                             fontFamily: "inherit",
                         }}
                     >
-                        + Add Rule
+                        {isAdding ? "Cancel" : "+ Add Rule"}
                     </button>
                 </div>
+
+                {/* Add Rule Form */}
+                {isAdding && (
+                    <div style={{
+                        padding: 16,
+                        background: "rgba(0,0,0,0.2)",
+                        borderBottom: "1px solid var(--border-subtle)",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 12
+                    }}>
+                        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                            <label style={{ fontSize: 11, color: "var(--text-tertiary)", textTransform: "uppercase" }}>When Column</label>
+                            <select
+                                value={triggerColumn}
+                                onChange={e => setTriggerColumn(e.target.value)}
+                                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--border-subtle)", color: "#fff", padding: 6, borderRadius: 4, outline: "none" }}
+                            >
+                                <option value="" disabled>Select Column...</option>
+                                {columns.map(col => <option key={col.key} value={col.key}>{col.label}</option>)}
+                            </select>
+                        </div>
+
+                        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                            <label style={{ fontSize: 11, color: "var(--text-tertiary)", textTransform: "uppercase" }}>Equals To</label>
+                            <input
+                                placeholder="e.g. Shortlisted"
+                                value={triggerValue}
+                                onChange={e => setTriggerValue(e.target.value)}
+                                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--border-subtle)", color: "#fff", padding: 6, borderRadius: 4, outline: "none" }}
+                            />
+                        </div>
+
+                        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                            <label style={{ fontSize: 11, color: "var(--text-tertiary)", textTransform: "uppercase" }}>Then Do</label>
+                            <select
+                                value={actionType}
+                                onChange={e => setActionType(e.target.value as AgentRule["actionType"])}
+                                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid var(--border-subtle)", color: "#fff", padding: 6, borderRadius: 4, outline: "none" }}
+                            >
+                                <option value="email">📧 Send Email</option>
+                                <option value="whatsapp">💬 Send WhatsApp</option>
+                                <option value="create_group">👥 Create Group</option>
+                            </select>
+                        </div>
+
+                        <button
+                            onClick={handleSaveRule}
+                            disabled={!triggerColumn || !triggerValue}
+                            style={{
+                                background: (!triggerColumn || !triggerValue) ? "rgba(255,255,255,0.1)" : "var(--success)",
+                                color: (!triggerColumn || !triggerValue) ? "var(--text-tertiary)" : "#000",
+                                border: "none",
+                                padding: "8px",
+                                borderRadius: 6,
+                                fontWeight: 700,
+                                cursor: (!triggerColumn || !triggerValue) ? "not-allowed" : "pointer",
+                                marginTop: 4
+                            }}
+                        >
+                            Save Rule
+                        </button>
+                    </div>
+                )}
 
                 {/* Rule Cards */}
                 <div style={{ flex: 1, overflowY: "auto", padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
@@ -229,7 +317,7 @@ export default function AgentSidebar({ rules, onToggleRule, onAddRule }: AgentSi
                     )}
                 </div>
 
-                {/* Process Log (collapsed preview) */}
+                {/* Process Log (Live Preview) */}
                 <div
                     style={{
                         borderTop: "1px solid var(--border-subtle)",
@@ -238,12 +326,39 @@ export default function AgentSidebar({ rules, onToggleRule, onAddRule }: AgentSi
                         fontSize: 11,
                         color: "var(--text-tertiary)",
                         background: "rgba(0, 0, 0, 0.3)",
+                        height: 150,
+                        display: "flex",
+                        flexDirection: "column",
                     }}
                 >
-                    <div style={{ marginBottom: 4, fontWeight: 600, color: "var(--text-secondary)" }}>
+                    <div style={{ marginBottom: 4, fontWeight: 600, color: "var(--text-secondary)", flexShrink: 0 }}>
                         ▸ Process Log
                     </div>
-                    <div>&gt; System ready. 0 tasks queued.</div>
+
+                    <div
+                        ref={logContainerRef}
+                        style={{
+                            flex: 1,
+                            overflowY: "auto",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 4
+                        }}
+                    >
+                        {logs.length === 0 ? (
+                            <div>&gt; System ready. Listening for agent tasks...</div>
+                        ) : (
+                            logs.map(log => (
+                                <div key={log.id} style={{
+                                    color: log.status === "failed" ? "var(--danger)" :
+                                        log.status === "success" ? "var(--success)" : "var(--accent)"
+                                }}>
+                                    <span style={{ opacity: 0.5 }}>[{new Date(log.timestamp).toLocaleTimeString()}]</span>{" "}
+                                    {log.message}
+                                </div>
+                            ))
+                        )}
+                    </div>
                 </div>
             </aside>
         </>
