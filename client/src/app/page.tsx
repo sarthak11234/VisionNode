@@ -1,15 +1,35 @@
 "use client";
 
-import { useState } from "react";
+/*
+ * Home Page — Wired to backend API via TanStack Query hooks
+ *
+ * DATA FLOW:
+ *   1. useRows(sheetId)       → fetches rows from GET /sheets/{id}/rows
+ *   2. useSheet(sheetId)      → fetches column schema from GET /sheets/{id}
+ *   3. useAgentRules(sheetId) → fetches rules from GET /agent-rules?sheet_id=...
+ *   4. useMutateRow(sheetId)  → optimistic PATCH on cell edit
+ *   5. useSheetSocket(sheetId)→ WebSocket for real-time row updates
+ *
+ * FALLBACK: If no sheetId is set (first load, no backend running),
+ *   we render the demo data so the UI is always visible during dev.
+ */
+
+import { useState, useCallback } from "react";
 import AppShell from "./components/AppShell";
 import DataGrid, { type ColumnSchema, type RowData } from "./components/DataGrid";
 import AgentSidebar, { type AgentRule } from "./components/AgentSidebar";
 import ActionBar from "./components/ActionBar";
+import {
+  useSheet,
+  useRows,
+  useMutateRow,
+  useDeleteRow,
+  useAgentRules,
+  useToggleRule,
+} from "@/hooks/useSheetData";
+import { useSheetSocket } from "@/hooks/useSheetSocket";
 
-/*
- * DEMO DATA — mimics a college-fest audition sheet.
- * This will be replaced with API calls in Phase 3.
- */
+/* ── Demo Data (fallback when backend is not connected) ── */
 
 const demoColumns: ColumnSchema[] = [
   { key: "name", label: "Name" },
@@ -34,29 +54,81 @@ const demoRules: AgentRule[] = [
   { id: "r3", triggerColumn: "score", triggerValue: "90", actionType: "create_group", enabled: false },
 ];
 
+/* ── Page Component ───────────────────────────────────── */
+
 export default function Home() {
+  // TODO: Replace with dynamic sheet selection (Phase 3 polish)
+  const [sheetId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  // Data hooks — enabled only when sheetId is set
+  const { data: sheet } = useSheet(sheetId);
+  const { data: apiRows } = useRows(sheetId);
+  const { data: apiRules } = useAgentRules(sheetId);
+  const mutateRow = useMutateRow(sheetId ?? "");
+  const deleteRow = useDeleteRow(sheetId ?? "");
+  const toggleRule = useToggleRule();
+
+  // WebSocket for live updates
+  useSheetSocket(sheetId);
+
+  // Resolve data: API if connected, demo as fallback
+  const columns: ColumnSchema[] = (sheet?.column_schema as ColumnSchema[]) ?? demoColumns;
+  const rows: RowData[] = apiRows ?? demoRows;
+  const rules: AgentRule[] = apiRules?.map((r) => ({
+    id: r.id,
+    triggerColumn: r.trigger_column,
+    triggerValue: r.trigger_value,
+    actionType: r.action_type as AgentRule["actionType"],
+    enabled: r.enabled,
+  })) ?? demoRules;
+
+  // Cell edit handler — optimistic PATCH or console log in demo mode
+  const handleCellEdit = useCallback(
+    (rowId: string, columnKey: string, value: string) => {
+      if (sheetId) {
+        mutateRow.mutate({ rowId, data: { [columnKey]: value } });
+      } else {
+        console.log(`[demo] Edit: row=${rowId} col=${columnKey} val=${value}`);
+      }
+    },
+    [sheetId, mutateRow],
+  );
+
+  // Bulk delete handler
+  const handleBulkDelete = useCallback(() => {
+    if (sheetId) {
+      selectedIds.forEach((id) => deleteRow.mutate(id));
+    } else {
+      console.log("[demo] Bulk delete:", selectedIds);
+    }
+    setSelectedIds([]);
+  }, [sheetId, selectedIds, deleteRow]);
 
   return (
     <AppShell>
       <DataGrid
-        columns={demoColumns}
-        rows={demoRows}
-        onCellEdit={(rowId, col, val) => {
-          console.log(`Edit: row=${rowId} col=${col} val=${val}`);
-        }}
+        columns={columns}
+        rows={rows}
+        onCellEdit={handleCellEdit}
         onRowSelect={setSelectedIds}
       />
       <AgentSidebar
-        rules={demoRules}
-        onToggleRule={(id, enabled) => console.log(`Toggle: ${id} → ${enabled}`)}
+        rules={rules}
+        onToggleRule={(id, enabled) => {
+          if (sheetId) {
+            toggleRule.mutate({ ruleId: id, enabled });
+          } else {
+            console.log(`[demo] Toggle: ${id} → ${enabled}`);
+          }
+        }}
         onAddRule={() => console.log("Add rule clicked")}
       />
       <ActionBar
         selectedCount={selectedIds.length}
         onBulkEmail={() => console.log("Bulk email:", selectedIds)}
         onBulkWhatsApp={() => console.log("Bulk WhatsApp:", selectedIds)}
-        onBulkDelete={() => console.log("Bulk delete:", selectedIds)}
+        onBulkDelete={handleBulkDelete}
         onClearSelection={() => setSelectedIds([])}
       />
     </AppShell>
