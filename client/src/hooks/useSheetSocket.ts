@@ -17,7 +17,7 @@
  *   (rooms, namespaces, fallback polling). Native WebSocket is enough.
  */
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "./useSheetData";
 
@@ -38,66 +38,71 @@ interface RowEvent {
 export function useSheetSocket(sheetId: string | null) {
     const qc = useQueryClient();
     const wsRef = useRef<WebSocket | null>(null);
-    const retryRef = useRef(0);
-
-    const connect = useCallback(() => {
-        if (!sheetId) return;
-
-        const ws = new WebSocket(`${WS_BASE}/ws/sheet/${sheetId}`);
-        wsRef.current = ws;
-
-        ws.onopen = () => {
-            retryRef.current = 0; // reset backoff on successful connect
-        };
-
-        ws.onmessage = (evt) => {
-            try {
-                const msg: RowEvent = JSON.parse(evt.data);
-                const key = queryKeys.rows(sheetId);
-
-                switch (msg.event) {
-                    case "row_created":
-                        // Append new row to cache
-                        qc.setQueryData(key, (old: RowEvent["row"][] | undefined) =>
-                            old ? [...old, msg.row] : [msg.row],
-                        );
-                        break;
-
-                    case "row_updated":
-                        // Update existing row in cache
-                        qc.setQueryData(key, (old: RowEvent["row"][] | undefined) =>
-                            old?.map((r) => (r.id === msg.row.id ? msg.row : r)),
-                        );
-                        break;
-
-                    case "row_deleted":
-                        // Remove row from cache
-                        qc.setQueryData(key, (old: RowEvent["row"][] | undefined) =>
-                            old?.filter((r) => r.id !== msg.row.id),
-                        );
-                        break;
-                }
-            } catch {
-                // Ignore malformed messages
-            }
-        };
-
-        ws.onclose = () => {
-            // Exponential backoff reconnection
-            const delay = Math.min(1000 * 2 ** retryRef.current, 30000);
-            retryRef.current += 1;
-            setTimeout(connect, delay);
-        };
-
-        ws.onerror = () => {
-            ws.close(); // triggers onclose → reconnect
-        };
-    }, [sheetId, qc]);
+    const retryCountRef = useRef(0);
 
     useEffect(() => {
+        if (!sheetId) return;
+
+        let disposed = false;
+        let timer: ReturnType<typeof setTimeout>;
+
+        function connect() {
+            if (disposed) return;
+
+            const ws = new WebSocket(`${WS_BASE}/ws/sheet/${sheetId}`);
+            wsRef.current = ws;
+
+            ws.onopen = () => {
+                retryCountRef.current = 0;
+            };
+
+            ws.onmessage = (evt) => {
+                try {
+                    const msg: RowEvent = JSON.parse(evt.data);
+                    const key = queryKeys.rows(sheetId!);
+
+                    switch (msg.event) {
+                        case "row_created":
+                            qc.setQueryData(key, (old: RowEvent["row"][] | undefined) =>
+                                old ? [...old, msg.row] : [msg.row],
+                            );
+                            break;
+
+                        case "row_updated":
+                            qc.setQueryData(key, (old: RowEvent["row"][] | undefined) =>
+                                old?.map((r) => (r.id === msg.row.id ? msg.row : r)),
+                            );
+                            break;
+
+                        case "row_deleted":
+                            qc.setQueryData(key, (old: RowEvent["row"][] | undefined) =>
+                                old?.filter((r) => r.id !== msg.row.id),
+                            );
+                            break;
+                    }
+                } catch {
+                    // Ignore malformed messages
+                }
+            };
+
+            ws.onclose = () => {
+                if (disposed) return;
+                const delay = Math.min(1000 * 2 ** retryCountRef.current, 30000);
+                retryCountRef.current += 1;
+                timer = setTimeout(connect, delay);
+            };
+
+            ws.onerror = () => {
+                ws.close();
+            };
+        }
+
         connect();
+
         return () => {
+            disposed = true;
+            clearTimeout(timer);
             wsRef.current?.close();
         };
-    }, [connect]);
+    }, [sheetId, qc]);
 }
