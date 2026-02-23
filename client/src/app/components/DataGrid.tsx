@@ -200,6 +200,7 @@ export default function DataGrid({
         [columns, onCellEdit]
     );
 
+    /* eslint-disable react-hooks/exhaustive-deps -- useReactTable manages its own reactivity */
     const table = useReactTable({
         data: rows,
         columns: tableColumns,
@@ -214,6 +215,7 @@ export default function DataGrid({
         getCoreRowModel: getCoreRowModel(),
         getRowId: (row) => row.id,
     });
+    /* eslint-enable react-hooks/exhaustive-deps */
 
     return (
         <div style={{ overflowX: "auto", borderRadius: 8, border: "1px solid var(--border-subtle)" }}>
