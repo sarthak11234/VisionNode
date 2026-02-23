@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Montserrat, JetBrains_Mono } from "next/font/google";
+import QueryProvider from "./providers/QueryProvider";
 import "./globals.css";
 
 /*
@@ -51,7 +52,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${montserrat.variable} ${jetbrainsMono.variable} antialiased`}
       >
-        {children}
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );
