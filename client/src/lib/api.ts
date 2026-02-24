@@ -1,88 +1,80 @@
-/*
- * API Client — Centralized fetch wrapper for the FastAPI backend
- *
- * WHY A CUSTOM CLIENT (not Axios, ky, or raw fetch)?
- *   - Zero dependency: reduces bundle size by ~15KB vs Axios
- *   - Type-safe: generic request<T>() returns typed responses
- *   - Base URL config: one place to change when deploying
- *   - Error normalization: all API errors become ApiError instances
- *
- * ALTERNATIVE: Axios (~15KB) — more features (interceptors, progress),
- *   but we don't need them yet. We can swap later if needed.
- *
- * BASE URL STRATEGY:
- *   - Dev: uses NEXT_PUBLIC_API_URL env var (defaults to http://localhost:8000)
- *   - Prod: set NEXT_PUBLIC_API_URL to the deployed backend URL
- *   - The /api/v1 prefix is baked in so callers just use relative paths
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+
+/**
+ * Core fetch wrapper for the application.
  */
+export async function fetchApi<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const url = `${API_BASE_URL}${endpoint}`;
+  
+  const headers = new Headers(options.headers);
+  if (!headers.has("Content-Type") && !(options.body instanceof FormData)) {
+    headers.set("Content-Type", "application/json");
+  }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
-const API_PREFIX = "/api/v1";
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
 
-/* ── Error Class ──────────────────────────────────────── */
-
-export class ApiError extends Error {
-    constructor(
-        public status: number,
-        public detail: string,
-    ) {
-        super(detail);
-        this.name = "ApiError";
+  if (!response.ok) {
+    let errorBody = "Unknown error";
+    try {
+      errorBody = await response.text();
+    } catch (e) {
+      // Ignore text parse errors if no body
     }
+    throw new Error(`API Error: ${response.status} - ${errorBody}`);
+  }
+
+  // Handle 204 No Content
+  if (response.status === 204) {
+    return null as any;
+  }
+
+  return response.json() as Promise<T>;
 }
-
-/* ── Core Request Function ────────────────────────────── */
-
-async function request<T>(
-    path: string,
-    options: RequestInit = {},
-): Promise<T> {
-    const url = `${BASE_URL}${API_PREFIX}${path}`;
-
-    const res = await fetch(url, {
-        headers: {
-            "Content-Type": "application/json",
-            ...options.headers,
-        },
-        ...options,
-    });
-
-    if (!res.ok) {
-        const body = await res.json().catch(() => ({ detail: res.statusText }));
-        throw new ApiError(res.status, body.detail ?? res.statusText);
-    }
-
-    // 204 No Content
-    if (res.status === 204) return undefined as T;
-
-    return res.json();
-}
-
-/* ── Typed API Methods ────────────────────────────────── */
 
 export const api = {
-    get: <T>(path: string) => request<T>(path),
+  // Workspaces
+  getWorkspaces: () => fetchApi<any[]>("/workspaces"),
+  createWorkspace: (data: { name: string; owner_id?: string }) => 
+    fetchApi<any>("/workspaces", { method: "POST", body: JSON.stringify(data) }),
+  
+  // Sheets
+  createSheet: (workspaceId: string, data: { name: string; column_schema: any[] }) => 
+    fetchApi<any>(`/workspaces/${workspaceId}/sheets`, { method: "POST", body: JSON.stringify(data) }),
+  getSheet: (sheetId: string) => fetchApi<any>(`/sheets/${sheetId}`),
+  updateSheetColumns: (sheetId: string, data: any) => 
+    fetchApi<any>(`/sheets/${sheetId}/columns`, { method: "PATCH", body: JSON.stringify(data) }),
 
-    post: <T>(path: string, body?: unknown) =>
-        request<T>(path, {
-            method: "POST",
-            body: body ? JSON.stringify(body) : undefined,
-        }),
+  // Rows
+  createRow: (sheetId: string, data: any) => 
+    fetchApi<any>(`/sheets/${sheetId}/rows`, { method: "POST", body: JSON.stringify(data) }),
+  updateRow: (rowId: string, data: { data: any }) => 
+    fetchApi<any>(`/rows/${rowId}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteRow: (rowId: string) => 
+    fetchApi<any>(`/rows/${rowId}`, { method: "DELETE" }),
+  
+  // Importer
+  importCSV: async (sheetId: string, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const url = `${API_BASE_URL}/sheets/${sheetId}/import-csv`;
+    const response = await fetch(url, {
+      method: "POST",
+      body: formData,
+    });
+    if (!response.ok) throw new Error(`CSV Import failed: ${response.statusText}`);
+    return response.json();
+  },
 
-    patch: <T>(path: string, body: unknown) =>
-        request<T>(path, {
-            method: "PATCH",
-            body: JSON.stringify(body),
-        }),
-
-    delete: <T>(path: string) =>
-        request<T>(path, { method: "DELETE" }),
-
-    /** For file uploads (CSV import) — don't set Content-Type, let browser handle it */
-    upload: <T>(path: string, formData: FormData) =>
-        request<T>(path, {
-            method: "POST",
-            headers: {}, // override Content-Type so browser sets multipart boundary
-            body: formData as unknown as BodyInit,
-        }),
+  // Agent Rules
+  getAgentRules: (sheetId: string) => 
+    fetchApi<any[]>(`/agent-rules?sheet_id=${sheetId}`),
+  createAgentRule: (data: any) => 
+    fetchApi<any>(`/agent-rules`, { method: "POST", body: JSON.stringify(data) }),
+  updateAgentRule: (ruleId: string, data: any) => 
+    fetchApi<any>(`/agent-rules/${ruleId}`, { method: "PATCH", body: JSON.stringify(data) }),
+  deleteAgentRule: (ruleId: string) => 
+    fetchApi<any>(`/agent-rules/${ruleId}`, { method: "DELETE" }),
 };
