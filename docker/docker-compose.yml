@@ -70,6 +70,18 @@ services:
       timeout: 5s
       retries: 5
 
+  # ─── WAHA (WhatsApp HTTP API) ─────────────────────────────────────────
+  # The 100% Free method for sending WhatsApp messages.
+  # This container wraps WhatsApp Web in a headless browser and exposes an API.
+  # We expose port 3001 so the user can scan the QR code.
+  # ─────────────────────────────────────────────────────────────────────
+  waha:
+    image: devlikeapro/waha
+    container_name: sheetagent-waha
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+
 volumes:
   postgres_data:
   redis_data:

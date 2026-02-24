@@ -36,10 +36,9 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
 
     # ── Communication ────────────────────────────────────
-    TWILIO_ACCOUNT_SID: str = ""
-    TWILIO_AUTH_TOKEN: str = ""
-    TWILIO_WHATSAPP_FROM: str = ""
-    RESEND_API_KEY: str = ""
+    WAHA_BASE_URL: str = "http://localhost:3001"
+    GMAIL_ADDRESS: str = ""
+    GMAIL_APP_PASSWORD: str = ""
 
     model_config = {
         "env_file": ".env",

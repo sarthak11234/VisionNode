@@ -1,37 +1,45 @@
 import logging
-import resend
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 class EmailService:
     def __init__(self):
-        if settings.RESEND_API_KEY:
-            resend.api_key = settings.RESEND_API_KEY
-        else:
-            logger.warning("Resend API key not found. EmailService will operate in mock mode.")
+        self.gmail_address = settings.GMAIL_ADDRESS
+        self.gmail_password = settings.GMAIL_APP_PASSWORD
 
     def send_email(self, to_email: str, subject: str, html_content: str):
         """
-        Sends an email using Resend.
+        Sends an email using standard Python smtplib and a Gmail App Password,
+        costing $0 and requiring no domain registration.
         """
-        if not settings.RESEND_API_KEY:
-            logger.info(f"[MOCK] Sending Email to {to_email}: Subject={subject}")
-            return "mock_email_id_123"
+        if not self.gmail_address or not self.gmail_password:
+            logger.info(f"[MOCK] Sending Email via SMTP to {to_email}: Subject={subject}")
+            return "mock_smtp_id_123"
+
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = f"SheetAgent <{self.gmail_address}>"
+        msg["To"] = to_email
+
+        # Attach the HexaCore stylized HTML template
+        html_part = MIMEText(html_content, "html")
+        msg.attach(html_part)
 
         try:
-            params = {
-                "from": "SheetAgent <notifications@visionnode.ai>", # Placeholder domain
-                "to": [to_email],
-                "subject": subject,
-                "html": html_content,
-            }
-
-            email = resend.Emails.send(params)
-            logger.info(f"Email sent! ID: {email['id']}")
-            return email['id']
+            # Connect to Gmail's SMTP server securely over SSL
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+                server.login(self.gmail_address, self.gmail_password)
+                server.sendmail(self.gmail_address, to_email, msg.as_string())
+                
+            logger.info(f"Email sent securely to {to_email} via Gmail SMTP")
+            return "smtp_success_id"
+            
         except Exception as e:
-            logger.error(f"Failed to send email: {str(e)}")
+            logger.error(f"Failed to send email via SMTP: {str(e)}")
             raise e
 
 email_service = EmailService()

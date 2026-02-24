@@ -14,7 +14,7 @@ from app.core.constants import WHATSAPP_TEMPLATES, ACTION_TYPE_WHATSAPP, ACTION_
 
 async def send_whatsapp_tool(state: AgentState) -> dict[str, Any]:
     """
-    Sends a WhatsApp template message using the real WhatsAppService.
+    Sends a WhatsApp message using the WAHA freeform HTTP service.
     """
     # 1. Extract data from state
     row_data = state["row_data"]
@@ -24,32 +24,23 @@ async def send_whatsapp_tool(state: AgentState) -> dict[str, Any]:
         print("[TOOL] WhatsApp Failed: No phone number found in row data")
         return {"status": "error", "error": "No phone number found"}
     
-    # 2. Identify template (default to 'status_update' or look in rule/action_config)
-    # For now, we simulate picking a template based on the trigger
-    template_id = WHATSAPP_TEMPLATES.get("status_update")
-    
-    # Build variables (e.g., [Name, Status])
+    # 2. Build human-like dynamic text
     name = row_data.get("name") or row_data.get("Name") or "User"
     status = state.get("trigger_value", "updated")
-    variables = [name, status]
+    talent = row_data.get("talent") or row_data.get("Talent") or "performance"
+    
+    body = f"Hey {name}! Just wanted to let you know your status for your {talent} audition has been marked as: *{status}*.\n\nLet us know if you have any questions!"
 
     try:
-        # 3. Call Service
-        # Note: WhatsAppService.send_template_message is synchronous, 
-        # but we are in an async tool called by LangGraph (which is run inside asyncio.run in Celery).
-        # We can run it in a threadpool to avoid blocking if needed, but for now simple call is fine.
-        message_sid = whatsapp_service.send_template_message(
-            to_number=phone,
-            template_id=template_id,
-            variables=variables
-        )
+        # 3. Call WAHA HTTP Service
+        message_sid = whatsapp_service.send_freeform_message(to_number=phone, body=body)
         
         return {
             "status": "success",
-            "provider": "twilio",
+            "provider": "waha",
             "message_sid": message_sid,
             "to": phone,
-            "template": template_id
+            "text": body
         }
     except Exception as e:
         return {"status": "error", "error": str(e)}

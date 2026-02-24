@@ -121,21 +121,22 @@
 
 ---
 
-## Phase 4 — Communication Integrations
+## Phase 4 — Communication Integrations (100% Free Method)
 
-### 4A. WhatsApp (Twilio / Meta Business API)
+### 4A. WhatsApp (WAHA / HTTP API)
 
-- [ ] Configure Twilio WhatsApp sandbox or Meta Cloud API credentials
-- [ ] Agent tool: Send 1-to-1 templated WhatsApp message
-- [ ] Agent tool: Create WhatsApp group + generate & distribute invite link
-- [ ] Log delivery status to `agent_logs`
+- [ ] Add WAHA (WhatsApp HTTP API) Docker image to `docker-compose.yml`
+- [ ] Refactor `whatsapp_service.py` to use `requests`/`httpx` against the WAHA `/sendText` endpoint
+- [ ] Implement WAHA session status check to ensure QR code is scanned
+- [ ] Implement Jitter-Delay algorithm to prevent Meta ban
+- [ ] Update `send_whatsapp_tool` to use the freeform text endpoint since templates aren't needed
 
-### 4B. Email (Resend + React Email)
+### 4B. Email (Standard Gmail SMTP)
 
-- [ ] Configure Resend API key + verified sender domain
-- [ ] Build React Email templates (selection notification, invite, PDF attachment)
-- [ ] Agent tool: Send email with template + row data
-- [ ] Log delivery status to `agent_logs`
+- [ ] Refactor `email_service.py` to use Python `smtplib` and `email.mime`
+- [ ] Configure `GMAIL_ADDRESS` and `GMAIL_APP_PASSWORD` in `.env`
+- [ ] Update `send_email_tool` to convert HTML templates to MIME text
+- [ ] Send emails authenticated as the host Gmail account
 
 ---
 

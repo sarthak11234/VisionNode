@@ -20,8 +20,7 @@ celery[redis]==5.4.0
 redis==5.2.1
 
 # Communication
-twilio==9.4.3
-resend==2.7.0
+# No required SDKs for WAHA and SMTP
 
 # Utilities
 python-dotenv==1.0.1
