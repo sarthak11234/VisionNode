@@ -67,6 +67,10 @@ async def list_rows(
     return await row_service.list_by_sheet(db, sheet_id)
 
 
+from sqlalchemy import select
+from app.models.agent_rule import AgentRule
+from app.tasks.agent_tasks import process_agent_rule
+
 @router.patch("/rows/{row_id}", response_model=RowResponse)
 async def update_row(
     row_id: uuid.UUID,
@@ -79,6 +83,28 @@ async def update_row(
     row = await row_service.update(db, row_id, payload)
     if not row:
         raise HTTPException(status_code=404, detail="Row not found")
+        
+    # --- Agent Rule Evaluation ---
+    # Phase 4: Iterate over enabled rules for this sheet
+    if payload.data:
+        # Find all active rules for this sheet
+        stmt = select(AgentRule).where(
+            AgentRule.sheet_id == row.sheet_id,
+            AgentRule.enabled == True
+        )
+        rules_res = await db.execute(stmt)
+        rules = rules_res.scalars().all()
+        
+        for rule in rules:
+            # Check if the trigger column was updated in this payload
+            if rule.trigger_column in payload.data:
+                # Check if the new value matches the trigger condition
+                if str(payload.data[rule.trigger_column]) == str(rule.trigger_value):
+                    print(f"Triggering rule '{rule.action_type}' for row {row.id}")
+                    # Enqueue LangGraph Celery task
+                    process_agent_rule.delay(str(rule.id), str(row.id))
+
+    # --- WebSocket Broadcast ---
     await manager.broadcast(
         row.sheet_id,
         {

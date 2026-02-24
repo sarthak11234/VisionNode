@@ -76,10 +76,17 @@ async def _process_agent_rule_async(rule_id_str: str, row_id_str: str) -> dict[s
         final_state = await agent_app.ainvoke(initial_state)
 
         # 4. Log the result to the database
+        action_res = final_state.get("action_result") or {}
+        provider_id = (
+            action_res.get("message_sid") or 
+            action_res.get("message_id")
+        )
+        
         log_entry = AgentLog(
             rule_id=rule.id,
             row_id=row.id,
             status=final_state.get("status", "unknown"),
+            provider_message_id=provider_id,
             message=final_state.get("error_message") or str(final_state.get("action_result") or "Action executed successfully")
         )
         db.add(log_entry)
