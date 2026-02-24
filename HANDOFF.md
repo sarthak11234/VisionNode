@@ -304,6 +304,6 @@ docker compose -f docker/docker-compose.yml up
 
 1. **ESLint warning**: `react-hooks/exhaustive-deps` fires on `useReactTable()` call in `DataGrid.tsx` — this is a false positive from a library call. Non-fatal, CI passes.
 2. **Tailwind `@theme` lint**: CSS linter may flag `@theme inline` as unknown — this is valid Tailwind v4 syntax. Safe to ignore.
-3. **No database yet**: Backend is fully coded but hasn't been run against a real PostgreSQL instance. Running `alembic upgrade head` + `uvicorn` requires a PostgreSQL connection (`DATABASE_URL` in `.env`).
+3. **psycopg async mode on Windows**: If running the FastAPI server or Alembic migrations on Windows using `asyncpg` or `psycopg` async mode, you may encounter `psycopg.InterfaceError: Psycopg cannot use the 'ProactorEventLoop'`. Our `alembic/env.py` and `app/main.py` explicitly set the event loop policy to `WindowsSelectorEventLoopPolicy` to fix this.
 4. **Demo data**: Frontend currently uses hardcoded demo data in `page.tsx`. Phase 3 replaces this with API calls.
 5. **WebSocket manager**: In-memory only (single server). For multi-server deployment, upgrade to Redis Pub/Sub in `ws_manager.py`.
