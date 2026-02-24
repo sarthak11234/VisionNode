@@ -200,24 +200,18 @@ export default function DataGrid({
         [columns, onCellEdit]
     );
 
-    const handleSelectionChange = useCallback(
-        (updater: React.SetStateAction<Record<string, boolean>>) => {
-            setRowSelection((prev) => {
-                const next = typeof updater === "function" ? updater(prev) : updater;
-                // Notify parent of selected row IDs
-                const selectedIds = Object.keys(next).filter((k) => next[k]).map((idx) => rows[Number(idx)]?.id).filter(Boolean);
-                onRowSelect?.(selectedIds);
-                return next;
-            });
-        },
-        [rows, onRowSelect],
-    );
+    // Notify parent of selected row IDs whenever selection changes
+    useEffect(() => {
+        // Because we use getRowId: (row) => row.id, the keys in rowSelection are already the IDs!
+        const selectedIds = Object.keys(rowSelection).filter((k) => rowSelection[k]);
+        onRowSelect?.(selectedIds);
+    }, [rowSelection, onRowSelect]);
 
     const table = useReactTable({
         data: rows,
         columns: tableColumns,
         state: { rowSelection },
-        onRowSelectionChange: handleSelectionChange,
+        onRowSelectionChange: setRowSelection,
         getCoreRowModel: getCoreRowModel(),
         getRowId: (row) => row.id,
     });
