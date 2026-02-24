@@ -1,0 +1,41 @@
+﻿
+C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\client\src\app\components\DataGrid.tsx
+   88:9   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\client\src\app\components\DataGrid.tsx:88:9
+  86 |     // Track previous external value via ref ΓÇö only reset draft when value actually changes.
+  87 |     const prevValueRef = useRef(value);
+> 88 |     if (prevValueRef.current !== value) {
+     |         ^^^^^^^^^^^^^^^^^^^^ Cannot access ref value during render
+  89 |         prevValueRef.current = value;
+  90 |         if (!editing) setDraft(value);
+  91 |     }  react-hooks/refs
+   89:9   error    Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\client\src\app\components\DataGrid.tsx:89:9
+  87 |     const prevValueRef = useRef(value);
+  88 |     if (prevValueRef.current !== value) {
+> 89 |         prevValueRef.current = value;
+     |         ^^^^^^^^^^^^^^^^^^^^ Cannot update ref during render
+  90 |         if (!editing) setDraft(value);
+  91 |     }
+  92 |                                                                                                     react-hooks/refs
+  219:19  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\client\src\app\components\DataGrid.tsx:219:19
+  217 |     );
+  218 |
+> 219 |     const table = useReactTable({
+      |                   ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+  220 |         data: rows,
+  221 |         columns: tableColumns,
+  222 |         state: { rowSelection },                                                                                          react-hooks/incompatible-library
+
+Γ£û 3 problems (2 errors, 1 warning)
+
