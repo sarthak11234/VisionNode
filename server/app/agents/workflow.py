@@ -9,9 +9,8 @@ State Machine Flow:
 
 from langgraph.graph import StateGraph, START, END
 from app.agents.state import AgentState
-from app.agents.tools import send_email_tool, send_whatsapp_tool
-
-# --- Nodes ---
+from app.agents.tools import send_email_tool, send_whatsapp_tool, create_whatsapp_group_tool
+from app.core.constants import ACTION_TYPE_WHATSAPP, ACTION_TYPE_GROUP, ACTION_TYPE_EMAIL
 
 async def check_condition(state: AgentState) -> dict:
     """Validate that the trigger condition is met by the row data."""
@@ -36,8 +35,11 @@ async def execute_action(state: AgentState) -> dict:
         if action == "email":
             res = await send_email_tool(state)
             return {"action_result": res, "status": "success"}
-        elif action == "whatsapp":
+        elif action in [ACTION_TYPE_WHATSAPP, "whatsapp"]:
             res = await send_whatsapp_tool(state)
+            return {"action_result": res, "status": "success"}
+        elif action in [ACTION_TYPE_GROUP, "create_whatsapp_group"]:
+            res = await create_whatsapp_group_tool(state)
             return {"action_result": res, "status": "success"}
         else:
             return {"status": "failed", "error_message": f"Unknown action: {action}"}
