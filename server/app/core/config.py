@@ -23,7 +23,7 @@ class Settings(BaseSettings):
 
     # ── Database ─────────────────────────────────────────
     DATABASE_URL: str = (
-        "postgresql+asyncpg://postgres:postgres@localhost:5432/sheetagent"
+        "postgresql+psycopg://postgres:postgres@localhost:5432/sheetagent"
     )
 
     # ── Redis ────────────────────────────────────────────

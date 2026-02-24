@@ -49,6 +49,9 @@ class AgentLog(Base):
     # "pending", "success", "failed", "retrying"
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
 
+    # SID from Twilio or Email ID from Resend
+    provider_message_id: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)
+
     # Human-readable result or error message
     message: Mapped[str | None] = mapped_column(Text, nullable=True)
 
