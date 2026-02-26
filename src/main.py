@@ -48,10 +48,10 @@ def main():
         
         for row in pending_rows:
             row_idx = row['_row_index']
-            name = row.get('Name', 'User')
-            phone = row.get('Phone', '').strip()
-            email = row.get('Email', '').strip()
-            message_body = row.get('Message', f"Hello {name}, this is an automated message from VisionNode!")
+            name = row.get('Name') or row.get('name') or 'User'
+            phone = (row.get('Phone') or row.get('Phone No.') or row.get('phone') or '').strip()
+            email = (row.get('Email') or row.get('email') or '').strip()
+            message_body = row.get('Message') or row.get('message') or f"Hello {name}, this is an automated message from VisionNode!"
             
             logger.info(f"Processing row {row_idx} for {name}...")
             

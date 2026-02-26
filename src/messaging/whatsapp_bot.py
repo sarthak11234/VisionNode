@@ -21,6 +21,11 @@ def format_e164(phone_number: str) -> str:
     """
     # Remove all non-numeric characters
     sanitized = re.sub(r'\D', '', phone_number)
+    
+    # Auto-prepend country code for standard 10-digit Indian numbers
+    if len(sanitized) == 10:
+        sanitized = "91" + sanitized
+        
     return sanitized
 
 class WhatsAppBot:
@@ -78,12 +83,21 @@ class WhatsAppBot:
         self.driver.get(api_link)
         
         try:
-            # Wait for send button to become clickable
-            send_btn = WebDriverWait(self.driver, 30).until(
-                EC.element_to_be_clickable((By.XPATH, "//span[@data-icon='send']"))
-            )
-            time.sleep(1) # Brief human jitter
-            send_btn.click()
+            # Wait for the chat to load completely
+            time.sleep(10) # Give WhatsApp Web time to transition from "Starting Chat"
+            
+            from selenium.webdriver.common.keys import Keys
+            try:
+                # Try the direct send button
+                send_btn = WebDriverWait(self.driver, 15).until(
+                    EC.element_to_be_clickable((By.XPATH, "//span[@data-icon='send']"))
+                )
+                send_btn.click()
+            except TimeoutException:
+                logger.warning("Send button not found via XPATH, attempting to send via ENTER key...")
+                # If the button isn't found, find the active text box and press Enter
+                textbox = self.driver.switch_to.active_element
+                textbox.send_keys(Keys.ENTER)
             
             logger.info(f"Message sent to {formatted_number}")
             
@@ -95,9 +109,7 @@ class WhatsAppBot:
             
             return True
             
-        except TimeoutException:
-            logger.error(f"Failed to send message to {formatted_number}: Timeout while waiting for send button.")
-            return False
         except Exception as e:
-            logger.error(f"Error sending message to {formatted_number}: {str(e)}")
+            self.driver.save_screenshot(f"wa_error_{formatted_number}.png")
+            logger.error(f"Failed to send message to {formatted_number}: {str(e)}. Saved screenshot to wa_error_{formatted_number}.png")
             return False

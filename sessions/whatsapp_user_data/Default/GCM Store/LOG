@@ -1,2 +1,3 @@
-2026/02/26-12:34:14.747 fe8 Creating DB C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\sessions\whatsapp_user_data\Default\GCM Store since it was missing.
-2026/02/26-12:34:14.753 fe8 Reusing MANIFEST C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\sessions\whatsapp_user_data\Default\GCM Store/MANIFEST-000001
+2026/02/26-12:58:09.803 1abc Reusing MANIFEST C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\sessions\whatsapp_user_data\Default\GCM Store/MANIFEST-000001
+2026/02/26-12:58:09.803 1abc Recovering log #3
+2026/02/26-12:58:09.827 1abc Reusing old log C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\sessions\whatsapp_user_data\Default\GCM Store/000003.log 
