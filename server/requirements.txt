@@ -25,3 +25,9 @@ redis==5.2.1
 # Utilities
 python-dotenv==1.0.1
 httpx==0.28.1
+
+# Browser Automation & Google Integration (VisionNode Messaging Module)
+selenium==4.18.1
+google-api-python-client==2.118.0
+google-auth-httplib2==0.2.0
+google-auth-oauthlib==1.2.0

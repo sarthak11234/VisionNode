@@ -1,0 +1,1 @@
+# VisionNode Messaging Module Initialization
