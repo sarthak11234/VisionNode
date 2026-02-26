@@ -1,0 +1,214 @@
+xvfb-run is working!
+Executing node with xvfb-run...
+[01:38:50.630] [32mINFO[39m (Bootstrap/42): [36mNODE - Catching unhandled rejections and exceptions enabled[39m
+[01:38:50.631] [32mINFO[39m (Bootstrap/42): [36mWAHA (WhatsApp HTTP API) - Running CORE version...[39m
+[01:38:54.726] [32mINFO[39m (Bootstrap/42): [36mWhatsApp HTTP API is running on: http://[::1]:3000[39m
+[01:38:54.726] [32mINFO[39m (Bootstrap/42): [36mEnvironment[39m [90m{"version":"2026.2.2","engine":"WEBJS","tier":"CORE","browser":"/usr/bin/chromium","platform":"linux/x64","worker":{"id":null}}[39m
+[01:38:53.677] [32mINFO[39m (Storage/42): [36mDirectory '/tmp/whatsapp-files' created from scratch[39m
+[01:38:54.722] [32mINFO[39m (NestFactory/42): [36mStarting Nest application...[39m
+[01:38:54.722] [32mINFO[39m (InstanceLoader/42): [36mPassportModule dependencies initialized[39m
+[01:38:54.722] [32mINFO[39m (InstanceLoader/42): [36mConfigHostModule dependencies initialized[39m
+[01:38:54.722] [32mINFO[39m (InstanceLoader/42): [36mLoggerModule dependencies initialized[39m
+[01:38:54.722] [32mINFO[39m (InstanceLoader/42): [36mTerminusModule dependencies initialized[39m
+[01:38:54.722] [32mINFO[39m (InstanceLoader/42): [36mConfigModule dependencies initialized[39m
+[01:38:54.722] [32mINFO[39m (InstanceLoader/42): [36mConfigModule dependencies initialized[39m
+[01:38:54.722] [32mINFO[39m (InstanceLoader/42): [36mServeStaticModule dependencies initialized[39m
+[01:38:54.722] [32mINFO[39m (InstanceLoader/42): [36mMediaLocalStorageModule dependencies initialized[39m
+[01:38:54.722] [32mINFO[39m (InstanceLoader/42): [36mServeStaticModule dependencies initialized[39m
+[01:38:54.723] [32mINFO[39m (InstanceLoader/42): [36mAppModuleCore dependencies initialized[39m
+[01:38:54.723] [32mINFO[39m (RoutesResolver/42): [36mAuthController {/api/:session/auth}:[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/auth/qr, GET} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/auth/request-code, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RoutesResolver/42): [36mApiKeysController {/api/keys}:[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/keys, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/keys, GET} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/keys/:id, PUT} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/keys/:id, DELETE} route[39m
+[01:38:54.723] [32mINFO[39m (RoutesResolver/42): [36mSessionsController {/api/sessions}:[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions, GET} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions/:session, GET} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions/:session/me, GET} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions/:session, PUT} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions/:session, DELETE} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions/:session/start, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions/:session/stop, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions/:session/logout, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions/:session/restart, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions/start, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions/stop, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sessions/logout, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RoutesResolver/42): [36mProfileController {/api/:session/profile}:[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/profile, GET} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/profile/name, PUT} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/profile/status, PUT} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/profile/picture, PUT} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/profile/picture, DELETE} route[39m
+[01:38:54.723] [32mINFO[39m (RoutesResolver/42): [36mChattingController {/api}:[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendText, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendImage, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendFile, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendVoice, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendVideo, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/send/link-custom-preview, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendButtons, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendList, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/forwardMessage, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendSeen, POST} route[39m
+[01:38:54.723] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/startTyping, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/stopTyping, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/reaction, PUT} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/star, PUT} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendPoll, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendPollVote, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendLocation, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendContactVcard, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/send/buttons/reply, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendText, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/messages, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/checkNumberStatus, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/reply, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/sendLinkPreview, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RoutesResolver/42): [36mChatsController {/api/:session/chats}:[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/overview, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/overview, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId, DELETE} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/picture, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/messages, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/messages/read, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/messages/:messageId, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/messages/:messageId/pin, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/messages/:messageId/unpin, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/messages, DELETE} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/messages/:messageId, DELETE} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/messages/:messageId, PUT} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/archive, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/unarchive, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/chats/:chatId/unread, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RoutesResolver/42): [36mCallsController {/api/:session/calls}:[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/calls/reject, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RoutesResolver/42): [36mChannelsController {/api/:session/channels}:[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/:id, DELETE} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/:id, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/:id/messages/preview, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/:id/follow, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/:id/unfollow, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/:id/mute, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/:id/unmute, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/search/by-view, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/search/by-text, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/search/views, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/search/countries, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/channels/search/categories, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RoutesResolver/42): [36mStatusController {/api/:session/status}:[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/status/text, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/status/image, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/status/voice, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/status/video, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/status/delete, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/status/new-message-id, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RoutesResolver/42): [36mLabelsController {/api/:session/labels}:[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/labels, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/labels, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/labels/:labelId, PUT} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/labels/:labelId, DELETE} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/labels/chats/:chatId, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/labels/chats/:chatId, PUT} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/labels/:labelId/chats, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RoutesResolver/42): [36mContactsController {/api/contacts}:[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/contacts/all, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/contacts, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/contacts/check-exists, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/contacts/about, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/contacts/profile-picture, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/contacts/block, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/contacts/unblock, POST} route[39m
+[01:38:54.724] [32mINFO[39m (RoutesResolver/42): [36mContactsSessionController {/api/:session/contacts}:[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/contacts/:chatId, PUT} route[39m
+[01:38:54.724] [32mINFO[39m (RoutesResolver/42): [36mLidsController {/api/:session/lids}:[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/lids, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/lids/count, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/lids/:lid, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/lids/pn/:phoneNumber, GET} route[39m
+[01:38:54.724] [32mINFO[39m (RoutesResolver/42): [36mGroupsController {/api/:session/groups}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/join-info, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/join, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/count, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/refresh, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id, DELETE} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/leave, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/picture, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/picture, PUT} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/picture, DELETE} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/description, PUT} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/subject, PUT} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/settings/security/info-admin-only, PUT} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/settings/security/info-admin-only, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/settings/security/messages-admin-only, PUT} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/settings/security/messages-admin-only, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/invite-code, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/invite-code/revoke, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/participants, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/participants/v2, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/participants/add, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/participants/remove, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/admin/promote, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/groups/:id/admin/demote, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RoutesResolver/42): [36mPresenceController {/api/:session/presence}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/presence, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/presence, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/presence/:chatId, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/presence/:chatId/subscribe, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RoutesResolver/42): [36mScreenshotController {/api}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/screenshot, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RoutesResolver/42): [36mEventsController {/api/:session/events}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/events, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RoutesResolver/42): [36mPingController {/ping}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/ping, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RoutesResolver/42): [36mHealthController {/health}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/health, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RoutesResolver/42): [36mServerController {/api/server}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/server/version, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/server/environment, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/server/status, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/server/stop, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RoutesResolver/42): [36mServerDebugController {/api/server/debug}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/server/debug/cpu, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/server/debug/heapsnapshot, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/server/debug/browser/trace/:session, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RoutesResolver/42): [36mVersionController {/api/version}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/version, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RoutesResolver/42): [36mMediaController {/api/:session/media}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/media/convert/voice, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/:session/media/convert/video, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RoutesResolver/42): [36mAppsController {/api/apps}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/apps, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/apps, POST} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/apps/:id, GET} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/apps/:id, PUT} route[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/apps/:id, DELETE} route[39m
+[01:38:54.725] [32mINFO[39m (RoutesResolver/42): [36mChatwootLocalesController {/api/apps/chatwoot}:[39m
+[01:38:54.725] [32mINFO[39m (RouterExplorer/42): [36mMapped {/api/apps/chatwoot/locales, GET} route[39m
+[01:38:54.725] [32mINFO[39m (NestApplication/42): [36mNest application successfully started[39m
+
+⬇️ ⬇️ ⬇️ ⬇️ ⬇️ ⬇️ ⬇️ ⬇️ ⬇️ ⬇️ ⬇️ ⬇️
+Generated credentials (persist to .env or WAHA_* env vars)
+Save these values to your environment (.env or WAHA_*) to reuse them; new keys are generated on every start otherwise.
+
+cat <<'EOF' >> .env
+
+WAHA_API_KEY=020be2d3ce694fcc9ce5aa2cd11fbe18
+WAHA_DASHBOARD_USERNAME=admin
+WAHA_DASHBOARD_PASSWORD=f210049772cf4392b06d19ae809035e9
+WHATSAPP_SWAGGER_USERNAME=admin
+WHATSAPP_SWAGGER_PASSWORD=f210049772cf4392b06d19ae809035e9
+EOF
+
+Generated credentials ready to copy
+⬆️ ⬆️ ⬆️ ⬆️ ⬆️ ⬆️ ⬆️ ⬆️ ⬆️ ⬆️ ⬆️ ⬆️
