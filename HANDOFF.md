@@ -177,8 +177,8 @@ The core AI feature:
 5. **Connect Process Log**: Stream agent execution to frontend via WebSocket
 
 ### Phase 5 — Communication Integrations
-1. **WhatsApp** via Twilio / Meta Business API (send messages, create groups)
-2. **Email** via Resend + React Email templates
+1. **WhatsApp** via Custom Selenium Bot (send messages directly from the sheet)
+2. **Email** via Python smtplib (send authenticated via GMAIL_APP_PASSWORD)
 
 ### Phase 6 — Authentication (Clerk)
 - Protect API routes with JWT middleware
@@ -281,8 +281,6 @@ docker compose -f docker/docker-compose.yml up
 ### Not Yet Installed (needed for upcoming phases)
 - `@tanstack/react-query` — data fetching (Phase 3)
 - `langgraph` + `celery` + `redis` — agent orchestration (Phase 4)
-- `twilio` — WhatsApp integration (Phase 5)
-- `resend` — email sending (Phase 5)
 - `@clerk/nextjs` — authentication (Phase 6)
 
 ---

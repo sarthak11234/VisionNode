@@ -123,20 +123,20 @@
 
 ## Phase 4 — Communication Integrations (100% Free Method)
 
-### 4A. WhatsApp (WAHA / HTTP API)
+### 4A. WhatsApp (Custom Selenium Bot)
 
-- [ ] Add WAHA (WhatsApp HTTP API) Docker image to `docker-compose.yml`
-- [ ] Refactor `whatsapp_service.py` to use `requests`/`httpx` against the WAHA `/sendText` endpoint
-- [ ] Implement WAHA session status check to ensure QR code is scanned
-- [ ] Implement Jitter-Delay algorithm to prevent Meta ban
-- [ ] Update `send_whatsapp_tool` to use the freeform text endpoint since templates aren't needed
+- [x] Add Custom WhatsApp Web Selenium Integration (Pivoted from WAHA)
+- [x] Initialize custom `whatsapp_bot.py` with Selenium driver
+- [x] Implement persistent Chrome session saving
+- [x] Implement Jitter-Delay leaky bucket rate limiter
+- [x] Implement E.164 phone formatting and automated Send
 
 ### 4B. Email (Standard Gmail SMTP)
 
-- [ ] Refactor `email_service.py` to use Python `smtplib` and `email.mime`
-- [ ] Configure `GMAIL_ADDRESS` and `GMAIL_APP_PASSWORD` in `.env`
-- [ ] Update `send_email_tool` to convert HTML templates to MIME text
-- [ ] Send emails authenticated as the host Gmail account
+- [x] Refactor `email_service.py` to use Python `smtplib` and `email.mime`
+- [x] Configure `GMAIL_ADDRESS` and `GMAIL_APP_PASSWORD` in `.env`
+- [x] Create standalone `mail_sender.py` for SMTP wrapping
+- [x] Send emails authenticated as the host Gmail account
 
 ---
 
