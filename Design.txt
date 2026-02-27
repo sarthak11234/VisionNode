@@ -1,0 +1,36 @@
+DESIGN SPECIFICATION: SHEETAGENT (HEXACORE INSPIRED)
+
+1. VISUAL IDENTITY & THEME
+- Core Aesthetic: Dark Mode, Cyber-Industrial, High-Contrast.
+- Primary Palette: 
+    - Background: #0B0B0B (Deep Charcoal/Black)
+    - Accents: #0905FE (Electric Cobalt Blue) for "Agent Action" buttons.
+    - Neutral: #B0B0B0 (Muted Silver) for secondary text and grid borders.
+    - Status Indicators: #4A63C6 (Soft Blue for "Pending"), #00FFC2 (Neon Teal for "Success/Sent").
+- Typography: 
+    - Headers: Bold Sans-Serif (e.g., Inter or Montserrat) with tight tracking.
+    - Data: Monospace fonts for spreadsheet cells to emphasize the "Technical/Engineering" feel.
+
+2. LAYOUT STRUCTURE (HEXACORE STYLE)
+- Navigation: Left-aligned vertical sidebar with "Glassmorphism" effect. Icons only, expanding on hover.
+- Header: Minimalist. Displaying "Active Agents: 4" and "System Latency: 24ms" to give it a command-center vibe.
+- Hero Section (Sheet View): 
+    - The spreadsheet isn't a basic white table. It’s integrated into the dark background with subtle #4D4C5A borders.
+    - Selected rows glow with a 1px Blue (#0905FE) border.
+
+3. THE "AGENT" INTERFACE (THE CORE INNOVATION)
+- Agent Sidebar: A floating right-hand panel (similar to HexaCore’s feature cards).
+- Visual Feedback: When an agent is "cleaning data" or "sending a WhatsApp," a pulsing blue glow appears around the active cell.
+- Terminal Output: A small, collapsible "Process Log" at the bottom showing real-time code execution (e.g., "> Executing WhatsApp_Group_Create... Success").
+
+4. KEY COMPONENTS & INTERACTIONS
+- Glassmorphic Cards: Use for "Agent Rules" (e.g., "If Status = Shortlisted, then Email").
+- Action Buttons: High-gloss, rounded buttons with a heavy drop shadow (Blue glow) for primary triggers.
+- Dynamic Grids: 
+    - Column headers have a distinct "Brushed Metal" texture.
+    - Hovering over a row highlights it in a deep navy (#1A1A2E).
+- Success States: Instead of simple popups, use a "System Notification" toast in the top right that mimics a security alert.
+
+5. UX FOR COLLEGE FEST AUDITIONS
+- Mobile Quick-View: A condensed version of the sheet for judges on the move, focusing on the "Score" and "Status" columns.
+- One-Tap Grouping: A floating "Action Button" (FAB) that appears when multiple rows are checked, styled with the HexaCore Blue gradient.
