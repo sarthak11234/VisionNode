@@ -1,0 +1,75 @@
+# ===========================================================================
+# SheetAgent — Docker Compose (Development)
+# ===========================================================================
+# This file spins up ALL infrastructure services needed for local development.
+#
+# Usage:
+#   docker compose up -d          → Start all services in background
+#   docker compose down           → Stop and remove containers
+#   docker compose down -v        → Also remove data volumes (fresh start)
+#   docker compose logs -f redis  → Tail logs for a specific service
+#
+# WHY DOCKER COMPOSE?
+#   Instead of manually installing PostgreSQL + Redis on your machine,
+#   Docker gives you isolated, reproducible environments.
+#   Alternative: Install natively — faster startup, but "works on my machine" bugs.
+# ===========================================================================
+
+services:
+  # ─── PostgreSQL ──────────────────────────────────────────────────────
+  # Our primary database. Stores workspaces, sheets, rows, agent rules.
+  # We use JSONB columns for flexible schema (users can add columns freely).
+  #
+  # Why PostgreSQL over MongoDB?
+  #   - JSONB gives us schema flexibility PLUS SQL power (JOINs, indexes).
+  #   - MongoDB would also work, but we'd lose relational constraints
+  #     (e.g., foreign keys between sheets ↔ rows ↔ agent_rules).
+  #   - PostgreSQL JSONB is indexable with GIN indexes → fast queries on
+  #     JSON fields without sacrificing relational integrity.
+  # ─────────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: sheetagent-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: sheetagent
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ─── Redis ───────────────────────────────────────────────────────────
+  # Dual purpose:
+  #   1. Celery message broker — queues background tasks (send email, etc.)
+  #   2. Caching layer — stores active agent sessions, transient state.
+  #
+  # Why Redis over RabbitMQ (for Celery broker)?
+  #   - Simpler to run and configure.
+  #   - We already need Redis for caching, so one fewer service to manage.
+  #   - RabbitMQ is more robust for complex routing (fanout, topics),
+  #     but our task queue is simple: fire-and-forget with retries.
+  # ─────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: sheetagent-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
