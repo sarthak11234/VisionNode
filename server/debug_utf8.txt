@@ -1,0 +1,60 @@
+﻿python : C:\Users\sarth
+\AppData\Roaming\Python
+\Python314\site-package
+s\langchain_core\_api\d
+eprecation.py:26: 
+UserWarning: Core 
+Pydantic V1 
+functionality isn't 
+compatible with Python 
+3.14 or greater.
+At line:1 char:75
++ ... \Omni\VisionNode\
+server"; python 
+debug_import.py > 
+debug_out.txt 2>&1
++                      
+         ~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (C:\Users\sart   
+ h\....14 or greate    
+r.:String) [], Rem    
+oteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+  from 
+pydantic.v1.fields 
+import FieldInfo as 
+FieldInfoV1
+Traceback (most recent 
+call last):
+  File "C:\Users\sarth\
+OneDrive\Desktop\Omni\V
+isionNode\server\debug_
+import.py", line 3, in 
+<module>
+    from 
+app.agents.workflow 
+import agent_app
+  File "C:\Users\sarth\
+OneDrive\Desktop\Omni\V
+isionNode\server\app\ag
+ents\workflow.py", 
+line 14, in <module>
+    from 
+langchain_google_genai 
+import ChatGoogleGenAI
+ImportError: cannot 
+import name 
+'ChatGoogleGenAI' from 
+'langchain_google_genai
+' (C:\Users\sarth\AppDa
+ta\Roaming\Python\Pytho
+n314\site-packages\lang
+chain_google_genai\__in
+it__.py)

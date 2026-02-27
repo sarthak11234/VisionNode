@@ -1,0 +1,65 @@
+﻿
+C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\client\src\app\components\DataGrid.tsx
+   87:23  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\client\src\app\components\DataGrid.tsx:87:23
+  85 |     // Sync external value changes (e.g. from WebSocket)
+  86 |     useEffect(() => {
+> 87 |         if (!editing) setDraft(value);
+     |                       ^^^^^^^^ Avoid calling setState() directly within an effect
+  88 |     }, [value, editing]);
+  89 |
+  90 |     const commit = useCallback(() => {  react-hooks/set-state-in-effect
+  203:19  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\client\src\app\components\DataGrid.tsx:203:19
+  201 |     );
+  202 |
+> 203 |     const table = useReactTable({
+      |                   ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+  204 |         data: rows,
+  205 |         columns: tableColumns,
+  206 |         state: { rowSelection },                                                                                                                                                                                                                                                                                                                                                                                             react-hooks/incompatible-library
+
+C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\client\src\hooks\useSheetSocket.ts
+  89:24  error  Error: Cannot access variable before it is declared
+
+`connect` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\client\src\hooks\useSheetSocket.ts:89:24
+  87 |             const delay = Math.min(1000 * 2 ** retryRef.current, 30000);
+  88 |             retryRef.current += 1;
+> 89 |             setTimeout(connect, delay);
+     |                        ^^^^^^^ `connect` accessed before it is declared
+  90 |         };
+  91 |
+  92 |         ws.onerror = () => {
+
+C:\Users\sarth\OneDrive\Desktop\Omni\VisionNode\client\src\hooks\useSheetSocket.ts:43:5
+  41 |     const retryRef = useRef(0);
+  42 |
+> 43 |     const connect = useCallback(() => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 44 |         if (!sheetId) return;
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 45 |
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 94 |         };
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 95 |     }, [sheetId, qc]);
+     | ^^^^^^^^^^^^^^^^^^^^^^^ `connect` is declared here
+  96 |
+  97 |     useEffect(() => {
+  98 |         connect();  react-hooks/immutability
+
+Γ£û 3 problems (2 errors, 1 warning)
+
