@@ -24,6 +24,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.row import Row
 from app.schemas.row import RowCreate, RowUpdate
+from app.services.agent_rule_service import evaluate_rules_for_row
+from app.core.worker import execute_agent_rule
 
 
 async def get_next_order(db: AsyncSession, sheet_id: uuid.UUID) -> float:
@@ -98,6 +100,13 @@ async def update(db: AsyncSession, row_id: uuid.UUID, payload: RowUpdate) -> Row
         row.row_order = update_data["row_order"]
     await db.flush()
     await db.refresh(row)
+    
+    # Phase 3: Evaluate Agent Rules and trigger Celery tasks
+    if "data" in update_data and update_data["data"] is not None:
+        matched_rules = await evaluate_rules_for_row(db, row.sheet_id, row.data)
+        for rule in matched_rules:
+            execute_agent_rule.delay(str(row.id), str(rule.id))
+            
     return row
 
 
